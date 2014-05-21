@@ -236,17 +236,39 @@ class TestNetworkBasicOps(manager.NetworkScenarioTest):
         router.update()
         #self.network_client.update_router(router)
 
+    def _check_no_public_network_connectivity(self):
+        # The target login is assumed to have been configured for
+        # key-based authentication by cloud-init.
+        ssh_login = self.config.compute.image_ssh_user
+        private_key = self.keypairs[self.tenant_id].private_key
+        flag = False
+        try:
+            for server, floating_ips in self.floating_ips.iteritems():
+                for floating_ip in floating_ips:
+                    ip_address = floating_ip.floating_ip_address
+                    self._check_vm_connectivity(ip_address, ssh_login, private_key)
+        except Exception as exc:
+            LOG.exception(exc)
+            debug.log_ip_ns()
+            flag = True
+        self.assertEqual(True,flag,"No VM connection as expected")
+
     def _check_public_network_connectivity(self):
         # The target login is assumed to have been configured for
         # key-based authentication by cloud-init.
         ssh_login = self.config.compute.image_ssh_user
         private_key = self.keypairs[self.tenant_id].private_key
-        for server, floating_ips in self.floating_ips.iteritems():
-            for floating_ip in floating_ips:
-                ip_address = floating_ip.floating_ip_address
-                self._check_vm_connectivity(ip_address, ssh_login, private_key)
-
-
+        try:
+            for server, floating_ips in self.floating_ips.iteritems():
+                for floating_ip in floating_ips:
+                    ip_address = floating_ip.floating_ip_address
+                    self._check_vm_connectivity(ip_address,
+                                                ssh_login,
+                                                private_key)
+        except Exception as exc:
+            LOG.exception(exc)
+            debug.log_ip_ns()
+            raise exc
 
     @attr(type='smoke')
     @services('compute', 'network')
@@ -259,5 +281,5 @@ class TestNetworkBasicOps(manager.NetworkScenarioTest):
         self._assign_floating_ips()
         self._check_public_network_connectivity()
         self._check_vm_connectivity_admin_state()
-        self._check_public_network_connectivity()
+        self._check_no_public_network_connectivity()
 
