@@ -43,8 +43,7 @@ class TestNetworkBasicVMConnectivity(manager.NetworkScenarioTest):
         super(TestNetworkBasicVMConnectivity, cls).check_preconditions()
         cfg = cls.config.network
         if not (cfg.tenant_networks_reachable or cfg.public_network_id):
-            msg = ('Either tenant_networks_reachable must be "true", or '
-                    'public_network_id must be defined.')
+            msg = ('Either tenant_networks_reachable must be "true", or public_network_id must be defined.')
             cls.enabled = False
             raise cls.skipException(msg)
 
@@ -96,14 +95,14 @@ class TestNetworkBasicVMConnectivity(manager.NetworkScenarioTest):
         self.assertIn(self.network.id, seen_net_ids)                                                                                                                                                                                                
         self.assertIn(self.subnet.id, seen_subnet_ids)
 
-    def _check_serverIP(self):
+    def _check_serverip(self):
     # Checks that the server has the assigned IP
         ssh_login = self.config.compute.image_ssh_user
         private_key = self.keypairs[self.tenant_id].private_key
-	for net_name, ip_addresses in self.server.networks.iteritems():
+        for net_name, ip_addresses in self.server.networks.iteritems():
                 for ip_address in ip_addresses:
-                    self._check_vm_connectivity(ip_address, ssh_login,
-                                                private_key)
+                    self._check_vm_connectivity(ip_address, ssh_login, private_key)
+
 
     @services('compute', 'network')
     def test_network_basic_ops(self):
@@ -111,6 +110,6 @@ class TestNetworkBasicVMConnectivity(manager.NetworkScenarioTest):
         self._create_security_groups()
         self._create_networks()
         self._check_networks()
-	name = rand_name('server-smoke-%d-' % 1)
+        name = rand_name('server-smoke-%d-' % 1)
         self._create_server(name, self.network)
-        self._check_serverIP()
+        self._check_serverip()
