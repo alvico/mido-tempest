@@ -25,6 +25,7 @@ from tempest.openstack.common import log as logging
 from tempest.scenario import manager
 from tempest.test import attr
 from tempest.test import services
+from pprint import pprint
 
 LOG = logging.getLogger(__name__)
 
@@ -228,8 +229,10 @@ class TestNetworkBasicOps(manager.NetworkScenarioTest):
 
     def _check_vm_connectivity_admin_state(self):
         router = self._get_router(self.tenant_id)
-        print router
-        print router.__dict__
+        pprint(router)
+        print router.get("admin_state_up")
+        router["admin_state_up"] = False
+        print router.get("admin_state_up")
         #self.network_client.update_router(router)
 
 
