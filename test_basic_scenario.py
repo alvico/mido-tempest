@@ -229,6 +229,7 @@ class TestNetworkBasicOps(manager.NetworkScenarioTest):
     def _check_vm_connectivity_admin_state(self):
         router = self._get_router(self.tenant_id)
         print router
+        print router.__dict__
         #self.network_client.update_router(router)
 
 
