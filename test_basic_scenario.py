@@ -227,14 +227,23 @@ class TestNetworkBasicOps(manager.NetworkScenarioTest):
             self.floating_ips.setdefault(server, [])
             self.floating_ips[server].append(floating_ip)
 
-    def _check_vm_connectivity_admin_state(self):
+    def _set_admin_state_up(self, object):
+        flag = object.get("admin_state_up")
+        object["admin_state_up"] = not flag
+        object.update()
+
+    def _do_test_vm_connectivity_admin_state_up(self, item):
+        self._set_admin_state(item)
+        self._check_public_network_connectivity(True)
+        self._set_admin_state(item)
+
+    def _check_vm_connectivity_admin_state_up(self):
         router = self._get_router(self.tenant_id)
-        pprint(router)
-        print router.get("admin_state_up")
-        router["admin_state_up"] = False
-        print router.get("admin_state_up")
-        router.update()
-        #self.network_client.update_router(router)
+        self._do_test_vm_connectivity_admin_state_up(router)
+        for network in self.networks:
+            self._do_test_vm_connectivity_admin_state_up(network)
+        for server in self.servers:
+            pprint(server)
 
     def _check_public_network_connectivity(self, mustfail):
         # The target login is assumed to have been configured for
@@ -268,5 +277,4 @@ class TestNetworkBasicOps(manager.NetworkScenarioTest):
         self._assign_floating_ips()
         self._check_public_network_connectivity(False)
         self._check_vm_connectivity_admin_state()
-        self._check_public_network_connectivity(True)
 
