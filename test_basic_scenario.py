@@ -226,10 +226,10 @@ class TestNetworkBasicOps(manager.NetworkScenarioTest):
             self.floating_ips.setdefault(server, [])
             self.floating_ips[server].append(floating_ip)
 
-    def _check_vm_connectivity_admin_State(self):
-        for router in self.routers:
-            print router
-            #self.network_client.update_router(router)
+    def _check_vm_connectivity_admin_state(self):
+        router = self._get_router(self.tenant_id)
+        print router
+        #self.network_client.update_router(router)
 
 
     @attr(type='smoke')
@@ -241,5 +241,5 @@ class TestNetworkBasicOps(manager.NetworkScenarioTest):
         self._check_networks()
         self._create_servers()
         self._assign_floating_ips()
-        self._check_vm_connectivity_admin_State
+        self._check_vm_connectivity_admin_state()
 
