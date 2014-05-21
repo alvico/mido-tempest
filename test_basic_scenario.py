@@ -236,7 +236,7 @@ class TestNetworkBasicOps(manager.NetworkScenarioTest):
         router.update()
         #self.network_client.update_router(router)
 
-    def _check_no_public_network_connectivity(self):
+    def _check_public_network_connectivity(self, mustfail):
         # The target login is assumed to have been configured for
         # key-based authentication by cloud-init.
         ssh_login = self.config.compute.image_ssh_user
@@ -248,12 +248,15 @@ class TestNetworkBasicOps(manager.NetworkScenarioTest):
                     ip_address = floating_ip.floating_ip_address
                     self._check_vm_connectivity(ip_address, ssh_login, private_key)
         except Exception as exc:
-            LOG.exception(exc)
-            debug.log_ip_ns()
-            flag = True
-        self.assertEqual(True,flag,"No VM connection as expected")
+            if mustfail:
+                flag = True
+            else:
+                LOG.exception(exc)
+                debug.log_ip_ns()
+                raise exc
+        self.assertEqual(True, flag, "No VM connection as expected")
 
-    def _check_public_network_connectivity(self):
+    def _old_check_public_network_connectivity(self):
         # The target login is assumed to have been configured for
         # key-based authentication by cloud-init.
         ssh_login = self.config.compute.image_ssh_user
@@ -279,7 +282,7 @@ class TestNetworkBasicOps(manager.NetworkScenarioTest):
         self._check_networks()
         self._create_servers()
         self._assign_floating_ips()
-        self._check_public_network_connectivity()
+        self._check_public_network_connectivity(False)
         self._check_vm_connectivity_admin_state()
-        self._check_no_public_network_connectivity()
+        self._check_no_public_network_connectivity(True)
 
