@@ -241,15 +241,11 @@ class TestNetworkBasicOps(manager.NetworkScenarioTest):
         # key-based authentication by cloud-init.
         ssh_login = self.config.compute.image_ssh_user
         private_key = self.keypairs[self.tenant_id].private_key
-        try:
-            for server, floating_ips in self.floating_ips.iteritems():
-                for floating_ip in floating_ips:
-                    ip_address = floating_ip.floating_ip_address
-                    self._check_vm_connectivity(ip_address, ssh_login, private_key)
-        except Exception as exc:
-            LOG.exception(exc)
-            debug.log_ip_ns()
-            raise exc
+        for server, floating_ips in self.floating_ips.iteritems():
+            for floating_ip in floating_ips:
+                ip_address = floating_ip.floating_ip_address
+                self._check_vm_connectivity(ip_address, ssh_login, private_key)
+
 
 
     @attr(type='smoke')
@@ -261,6 +257,7 @@ class TestNetworkBasicOps(manager.NetworkScenarioTest):
         self._check_networks()
         self._create_servers()
         self._assign_floating_ips()
+        self._check_public_network_connectivity()
         self._check_vm_connectivity_admin_state()
         self._check_public_network_connectivity()
 
