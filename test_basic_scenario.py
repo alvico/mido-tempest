@@ -250,7 +250,6 @@ class TestNetworkBasicOps(manager.NetworkScenarioTest):
         # key-based authentication by cloud-init.
         ssh_login = self.config.compute.image_ssh_user
         private_key = self.keypairs[self.tenant_id].private_key
-        flag = False
         try:
             for server, floating_ips in self.floating_ips.iteritems():
                 for floating_ip in floating_ips:
@@ -258,12 +257,12 @@ class TestNetworkBasicOps(manager.NetworkScenarioTest):
                     self._check_vm_connectivity(ip_address, ssh_login, private_key)
         except Exception as exc:
             if mustfail:
-                flag = True
+                self.assertEqual(True, True, "No VM connection as expected")
             else:
                 LOG.exception(exc)
                 debug.log_ip_ns()
                 raise exc
-        self.assertEqual(True, flag, "No VM connection as expected")
+
 
 
     @attr(type='smoke')
