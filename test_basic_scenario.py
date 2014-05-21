@@ -245,23 +245,12 @@ class TestNetworkBasicOps(manager.NetworkScenarioTest):
             for server, floating_ips in self.floating_ips.iteritems():
                 for floating_ip in floating_ips:
                     ip_address = floating_ip.floating_ip_address
-                    self._check_vm_no_connectivity(ip_address, ssh_login, private_key)
+                    self._check_vm_connectivity(ip_address, ssh_login, private_key)
         except Exception as exc:
             LOG.exception(exc)
             debug.log_ip_ns()
             raise exc
 
-    def _check_vm_no_connectivity(self, ip_address, username, private_key):
-        self.assertFalse(self._ping_ip_address(ip_address),
-                        "Timed out waiting for %s to become "
-                        "reachable" % ip_address)
-        self.assertFalse(self._is_reachable_via_ssh(
-            ip_address,
-            username,
-            private_key,
-            timeout=self.config.compute.ssh_timeout),
-            'Auth failure in connecting to %s@%s via ssh' %
-            (username, ip_address))
 
     @attr(type='smoke')
     @services('compute', 'network')
