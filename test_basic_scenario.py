@@ -181,7 +181,7 @@ class TestBasicScenario(manager.NetworkScenarioTest):
         router = self._get_router(self.tenant_id)
         self._do_test_vm_connectivity_admin_state_up(router)
         for network in self.networks:
-            self.assertRaises(exceptions.TimeoutException, self._do_test_vm_connectivity_admin_state_up, network)
+            self.assertRaises(exceptions.TimeoutException, self._do_test_vm_connectivity_admin_state_up, router)
         for server in self.servers:
             pprint(server)
 
