@@ -227,10 +227,10 @@ class TestNetworkBasicOps(manager.NetworkScenarioTest):
             self.floating_ips.setdefault(server, [])
             self.floating_ips[server].append(floating_ip)
 
-    def _set_admin_state_up(self, object):
-        flag = object.get("admin_state_up")
-        object["admin_state_up"] = not flag
-        object.update()
+    def _set_admin_state_up(self, item):
+        flag = item.get("admin_state_up")
+        item["admin_state_up"] = not flag
+        item.update()
 
     def _do_test_vm_connectivity_admin_state_up(self, item):
         self._set_admin_state(item)
