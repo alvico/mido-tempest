@@ -165,25 +165,23 @@ class TestBasicScenario(manager.NetworkScenarioTest):
             self.floating_ips[server].append(floating_ip)
 
     def _set_admin_state_up(self, item):
-        flag = item.get("admin_state_up")
-        item["admin_state_up"] = not flag
+        item["admin_state_up"] = not item.get("admin_state_up")
         item.update()
 
     def _do_test_vm_connectivity_admin_state_up(self, item):
         self._set_admin_state_up(item)
-        #try:
-        self._check_public_network_connectivity()
-        self._set_admin_state_up(item)
-        #except Exception as exc:
-        #    self._set_admin_state_up(item)
-        #    pprint("enters _do_test_vm_connectivity_admin_state_up")
-        #    LOG.exception(exc)
-        #   debug.log_ip_ns()
-        #    raise exc
+        try:
+            self._check_public_network_connectivity()
+            #self._set_admin_state_up(item)
+        except Exception as exc:
+            self._set_admin_state_up(item)
+            pprint("enters _do_test_vm_connectivity_admin_state_up")
+            LOG.exception(exc)
+            debug.log_ip_ns()
+            raise exc
 
     def _check_vm_connectivity_admin_state_up(self):
         router = self._get_router(self.tenant_id)
-        self._do_test_vm_connectivity_admin_state_up(router)
         self.assertRaises(exceptions.TimeoutException, self._do_test_vm_connectivity_admin_state_up, router)
         for network in self.networks:
             self.assertRaises(exceptions.TimeoutException, self._do_test_vm_connectivity_admin_state_up, network)
