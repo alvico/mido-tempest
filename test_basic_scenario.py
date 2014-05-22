@@ -179,7 +179,7 @@ class TestBasicScenario(manager.NetworkScenarioTest):
             debug.log_ip_ns()
             raise exc
         finally:
-             self._set_admin_state_up(item)
+            self._set_admin_state_up(item)
 
     def _check_vm_connectivity_admin_state_up(self):
         router = self._get_router(self.tenant_id)
