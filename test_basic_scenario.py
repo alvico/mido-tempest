@@ -166,26 +166,24 @@ class TestBasicScenario(manager.NetworkScenarioTest):
 
     def _set_admin_state_up(self, item):
         flag = item.get("admin_state_up")
-        pprint(flag)
         item["admin_state_up"] = not flag
-        pprint(item["admin_state_up"])
         item.update()
-        pprint("item: %s", item)
 
     def _do_test_vm_connectivity_admin_state_up(self, item):
         self._set_admin_state_up(item)
-        try:
-            self._check_public_network_connectivity()
-        except Exception as exc:
-            self._set_admin_state_up(item)
-            pprint("enters _do_test_vm_connectivity_admin_state_up")
-            LOG.exception(exc)
-            debug.log_ip_ns()
-            raise exc
+        #try:
+        self._check_public_network_connectivity()
+        self._set_admin_state_up(item)
+        #except Exception as exc:
+        #    self._set_admin_state_up(item)
+        #    pprint("enters _do_test_vm_connectivity_admin_state_up")
+        #    LOG.exception(exc)
+        #   debug.log_ip_ns()
+        #    raise exc
 
     def _check_vm_connectivity_admin_state_up(self):
         router = self._get_router(self.tenant_id)
-        pprint(self._do_test_vm_connectivity_admin_state_up(router))
+        self._do_test_vm_connectivity_admin_state_up(router)
         self.assertRaises(exceptions.TimeoutException, self._do_test_vm_connectivity_admin_state_up, router)
         for network in self.networks:
             self.assertRaises(exceptions.TimeoutException, self._do_test_vm_connectivity_admin_state_up, network)
@@ -193,8 +191,6 @@ class TestBasicScenario(manager.NetworkScenarioTest):
             pprint(server)
 
     def _check_public_network_connectivity(self):
-        # The target login is assumed to have been configured for
-        # key-based authentication by cloud-init.
         ssh_login = self.config.compute.image_ssh_user
         private_key = self.keypairs[self.tenant_id].private_key
         try:
