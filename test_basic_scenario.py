@@ -208,6 +208,6 @@ class TestBasicScenario(manager.NetworkScenarioTest):
         self._check_networks()
         self._create_servers()
         self._assign_floating_ips()
-        self._check_public_network_connectivity(False)
+        self._check_public_network_connectivity()
         self._check_vm_connectivity_admin_state_up()
 
