@@ -177,7 +177,7 @@ class TestBasicScenario(manager.NetworkScenarioTest):
             pprint("enters _do_test_vm_connectivity_admin_state_up")
             LOG.exception(exc)
             debug.log_ip_ns()
-            raise exc
+            raise exceptions.TimeoutException
         finally:
             self._set_admin_state_up(item)
 
