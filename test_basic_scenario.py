@@ -170,18 +170,19 @@ class TestBasicScenario(manager.NetworkScenarioTest):
         item.update()
 
     def _do_test_vm_connectivity_admin_state_up(self, item):
-        self._set_admin_state(item)
+        self._set_admin_state_up(item)
         try:
             self._check_public_network_connectivity()
         except Exception as exc:
-            self._set_admin_state(item)
+            self._set_admin_state_up(item)
             raise exc
 
     def _check_vm_connectivity_admin_state_up(self):
         router = self._get_router(self.tenant_id)
         self._do_test_vm_connectivity_admin_state_up(router)
+        self.assertRaises(exceptions.TimeoutException, self._do_test_vm_connectivity_admin_state_up, router)
         for network in self.networks:
-            self.assertRaises(exceptions.TimeoutException, self._do_test_vm_connectivity_admin_state_up, router)
+            self.assertRaises(exceptions.TimeoutException, self._do_test_vm_connectivity_admin_state_up, network)
         for server in self.servers:
             pprint(server)
 
