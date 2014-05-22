@@ -169,23 +169,24 @@ class TestBasicScenario(manager.NetworkScenarioTest):
         item.update()
 
     def _do_test_vm_connectivity_admin_state_up(self, item):
+        failed = False
         self._set_admin_state_up(item)
         try:
             self._check_public_network_connectivity()
             #self._set_admin_state_up(item)
         except Exception as exc:
             pprint("enters _do_test_vm_connectivity_admin_state_up")
-            LOG.exception(exc)
-            debug.log_ip_ns()
-            raise exceptions.TimeoutException
+            failed = True
+            #raise exceptions.TimeoutException
         finally:
             self._set_admin_state_up(item)
+            self.assertEqual(True, failed, "No ping to VM as expected")
 
     def _check_vm_connectivity_admin_state_up(self):
         router = self._get_router(self.tenant_id)
-        self.assertRaises(exceptions.TimeoutException, self._do_test_vm_connectivity_admin_state_up, router)
+        self._do_test_vm_connectivity_admin_state_up(router)
         for network in self.networks:
-            self.assertRaises(exceptions.TimeoutException, self._do_test_vm_connectivity_admin_state_up, network)
+            self._do_test_vm_connectivity_admin_state_up(network)
         for server in self.servers:
             pprint(server)
 
