@@ -174,11 +174,12 @@ class TestBasicScenario(manager.NetworkScenarioTest):
             self._check_public_network_connectivity()
             #self._set_admin_state_up(item)
         except Exception as exc:
-            self._set_admin_state_up(item)
             pprint("enters _do_test_vm_connectivity_admin_state_up")
             LOG.exception(exc)
             debug.log_ip_ns()
             raise exc
+        finally:
+             self._set_admin_state_up(item)
 
     def _check_vm_connectivity_admin_state_up(self):
         router = self._get_router(self.tenant_id)
