@@ -166,8 +166,11 @@ class TestBasicScenario(manager.NetworkScenarioTest):
 
     def _set_admin_state_up(self, item):
         flag = item.get("admin_state_up")
+        pprint(flag)
         item["admin_state_up"] = not flag
+        pprint(item["admin_state_up"])
         item.update()
+        pprint("item: %s", item)
 
     def _do_test_vm_connectivity_admin_state_up(self, item):
         self._set_admin_state_up(item)
