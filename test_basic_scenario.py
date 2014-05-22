@@ -25,82 +25,19 @@ from tempest.openstack.common import log as logging
 from tempest.scenario import manager
 from tempest.test import attr
 from tempest.test import services
+from tempest import exceptions
 from pprint import pprint
 
 LOG = logging.getLogger(__name__)
 
 
-class TestNetworkBasicOps(manager.NetworkScenarioTest):
-
-    """
-    This smoke test suite assumes that Nova has been configured to
-    boot VM's with Neutron-managed networking, and attempts to
-    verify network connectivity as follows:
-
-     * For a freshly-booted VM with an IP address ("port") on a given network:
-
-       - the Tempest host can ping the IP address.  This implies, but
-         does not guarantee (see the ssh check that follows), that the
-         VM has been assigned the correct IP address and has
-         connectivity to the Tempest host.
-
-       - the Tempest host can perform key-based authentication to an
-         ssh server hosted at the IP address.  This check guarantees
-         that the IP address is associated with the target VM.
-
-       # TODO(mnewby) - Need to implement the following:
-       - the Tempest host can ssh into the VM via the IP address and
-         successfully execute the following:
-
-         - ping an external IP address, implying external connectivity.
-
-         - ping an external hostname, implying that dns is correctly
-           configured.
-
-         - ping an internal IP address, implying connectivity to another
-           VM on the same network.
-
-     There are presumed to be two types of networks: tenant and
-     public.  A tenant network may or may not be reachable from the
-     Tempest host.  A public network is assumed to be reachable from
-     the Tempest host, and it should be possible to associate a public
-     ('floating') IP address with a tenant ('fixed') IP address to
-     facilitate external connectivity to a potentially unroutable
-     tenant IP address.
-
-     This test suite can be configured to test network connectivity to
-     a VM via a tenant network, a public network, or both.  If both
-     networking types are to be evaluated, tests that need to be
-     executed remotely on the VM (via ssh) will only be run against
-     one of the networks (to minimize test execution time).
-
-     Determine which types of networks to test as follows:
-
-     * Configure tenant network checks (via the
-       'tenant_networks_reachable' key) if the Tempest host should
-       have direct connectivity to tenant networks.  This is likely to
-       be the case if Tempest is running on the same host as a
-       single-node devstack installation with IP namespaces disabled.
-
-     * Configure checks for a public network if a public network has
-       been configured prior to the test suite being run and if the
-       Tempest host should have connectivity to that public network.
-       Checking connectivity for a public network requires that a
-       value be provided for 'public_network_id'.  A value can
-       optionally be provided for 'public_router_id' if tenants will
-       use a shared router to access a public network (as is likely to
-       be the case when IP namespaces are not enabled).  If a value is
-       not provided for 'public_router_id', a router will be created
-       for each tenant and use the network identified by
-       'public_network_id' as its gateway.
-
-    """
+class TestBasicScenario(manager.NetworkScenarioTest):
 
     CONF = config.TempestConfig()
 
     @classmethod
     def check_preconditions(cls):
-        super(TestNetworkBasicOps, cls).check_preconditions()
+        super(TestBasicScenario, cls).check_preconditions()
         cfg = cls.config.network
         if not (cfg.tenant_networks_reachable or cfg.public_network_id):
             msg = ('Either tenant_networks_reachable must be "true", or '
@@ -110,7 +47,7 @@ class TestNetworkBasicOps(manager.NetworkScenarioTest):
 
     @classmethod
     def setUpClass(cls):
-        super(TestNetworkBasicOps, cls).setUpClass()
+        super(TestBasicScenario, cls).setUpClass()
         cls.check_preconditions()
         # TODO(mnewby) Consider looking up entities as needed instead
         # of storing them as collections on the class.
@@ -234,18 +171,18 @@ class TestNetworkBasicOps(manager.NetworkScenarioTest):
 
     def _do_test_vm_connectivity_admin_state_up(self, item):
         self._set_admin_state(item)
-        self._check_public_network_connectivity(True)
+        self._check_public_network_connectivity()
         self._set_admin_state(item)
 
     def _check_vm_connectivity_admin_state_up(self):
         router = self._get_router(self.tenant_id)
         self._do_test_vm_connectivity_admin_state_up(router)
         for network in self.networks:
-            self._do_test_vm_connectivity_admin_state_up(network)
+            self.assertRaises(exceptions.TimeoutException, self._do_test_vm_connectivity_admin_state_up(network))
         for server in self.servers:
             pprint(server)
 
-    def _check_public_network_connectivity(self, mustfail):
+    def _check_public_network_connectivity(self):
         # The target login is assumed to have been configured for
         # key-based authentication by cloud-init.
         ssh_login = self.config.compute.image_ssh_user
@@ -256,18 +193,15 @@ class TestNetworkBasicOps(manager.NetworkScenarioTest):
                     ip_address = floating_ip.floating_ip_address
                     self._check_vm_connectivity(ip_address, ssh_login, private_key)
         except Exception as exc:
-            if mustfail:
-                self.assertEqual(True, True, "No VM connection as expected")
-            else:
-                LOG.exception(exc)
-                debug.log_ip_ns()
-                raise exc
+            LOG.exception(exc)
+            debug.log_ip_ns()
+            raise exc
 
 
 
     @attr(type='smoke')
     @services('compute', 'network')
-    def test_network_basic_ops(self):
+    def test_basic_scenario(self):
         self._create_keypairs()
         self._create_security_groups()
         self._create_networks()
