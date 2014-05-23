@@ -176,18 +176,22 @@ class TestBasicScenario(manager.NetworkScenarioTest):
         finally:
             self.assertEqual(True, failed, "No ping to VM as expected")
 
-    def _check_vm_connectivity_admin_state_up(self):
+    def _check_vm_connectivity_router(self):
         for router in self.routers:
             self.network_client.update_router(router.id, {'router': {'admin_state_up': False}})
             pprint("router test")
             self._do_test_vm_connectivity_admin_state_up(router)
             self.network_client.update_router(router.id, {'router': {'admin_state_up': True}})
+
+    def _check_vm_connectivity_net(self):
         for network in self.networks:
             pprint("network test")
             self.network_client.update_network(network.id, {'network': {'admin_state_up': False}})
             self._do_test_vm_connectivity_admin_state_up(network)
-            self.network_client.update_network(network.id, {'network': {'admin_state_up': False}})
-        #TO-DO: Test-Ports
+            self.network_client.update_network(network.id, {'network': {'admin_state_up': True}})
+
+    def _check_vm_connectivity_net(self):
+        #TODO Ports
 
     def _check_public_network_connectivity(self):
         ssh_login = self.config.compute.image_ssh_user
@@ -216,5 +220,14 @@ class TestBasicScenario(manager.NetworkScenarioTest):
         self._create_servers()
         self._assign_floating_ips()
         self._check_public_network_connectivity()
-        self._check_vm_connectivity_admin_state_up()
+
+    @attr(type='smoke')
+    @services('compute', 'network')
+    def test_check_vm_connectivity_router(self):
+        self._check_vm_connectivity_router()
+
+    @attr(type='smoke')
+    @services('compute', 'network')
+    def test_check_vm_connectivity_net(self):
+        self._check_vm_connectivity_net()
 
