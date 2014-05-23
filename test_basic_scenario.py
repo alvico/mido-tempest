@@ -44,6 +44,7 @@ class TestBasicScenario(manager.NetworkScenarioTest):
                    'public_network_id must be defined.')
             cls.enabled = False
             raise cls.skipException(msg)
+        cls._basic_scenario()
 
     @classmethod
     def setUpClass(cls):
@@ -207,9 +208,7 @@ class TestBasicScenario(manager.NetworkScenarioTest):
             debug.log_ip_ns()
             raise exceptions.TimeoutException
 
-    @attr(type='smoke')
-    @services('compute', 'network')
-    def test_basic_scenario(self):
+    def _basic_scenario(self):
         self._create_keypairs()
         self._create_security_groups()
         self._create_networks()
