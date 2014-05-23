@@ -57,7 +57,7 @@ class TestBasicScenario(manager.NetworkScenarioTest):
         cls.routers = []
         cls.servers = []
         cls.floating_ips = {}
-        cls.basic_scenario_up = True
+        cls.basic_scenario_flag = True
 
     def _get_router(self, tenant_id):
         """Retrieve a router for the given tenant id.
