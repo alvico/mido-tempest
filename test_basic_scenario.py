@@ -206,7 +206,7 @@ class TestBasicScenario(manager.NetworkScenarioTest):
         except Exception as exc:
             #LOG.exception(exc)
             #debug.log_ip_ns()
-            raise exc
+            raise exceptions.TimeoutException
 
 
 
