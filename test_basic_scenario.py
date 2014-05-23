@@ -162,29 +162,31 @@ class TestBasicScenario(manager.NetworkScenarioTest):
             self.floating_ips.setdefault(server, [])
             self.floating_ips[server].append(floating_ip)
 
-    def _do_test_vm_connectivity_admin_state_up(self, item):
-        failed = False
-        pprint(item)
-        try:
-            self.assertRaises(exceptions.TimeoutException, self._check_public_network_connectivity())
-        except Exception as exc:
-            failed = True
-        finally:
-            self.assertEqual(True, failed, "No ping to VM as expected")
+    def _do_test_vm_connectivity_admin_state_up(self):
+        self.assertRaises(exceptions.TimeoutException, self._check_public_network_connectivity())
 
     def _check_vm_connectivity_router(self):
         for router in self.routers:
             self.network_client.update_router(router.id, {'router': {'admin_state_up': False}})
             pprint("router test")
-            self._do_test_vm_connectivity_admin_state_up(router)
+            self._do_test_vm_connectivity_admin_state_up()
             self.network_client.update_router(router.id, {'router': {'admin_state_up': True}})
 
     def _check_vm_connectivity_net(self):
         for network in self.networks:
             pprint("network test")
             self.network_client.update_network(network.id, {'network': {'admin_state_up': False}})
-            self._do_test_vm_connectivity_admin_state_up(network)
+            self._do_test_vm_connectivity_admin_state_up()
             self.network_client.update_network(network.id, {'network': {'admin_state_up': True}})
+
+    def _check_vm_connectivity_port(self):
+        resp, body = self.client.list_ports()
+        self.assertEqual('200', resp['status'])
+        ports_list = body['ports']
+        for port in ports_list:
+            self.network_client.update_network(port.id, {'network': {'admin_state_up': False}})
+            self._do_test_vm_connectivity_admin_state_up(port)
+            self.network_client.update_network(port.id, {'network': {'admin_state_up': True}})
 
     def _check_public_network_connectivity(self):
         ssh_login = self.config.compute.image_ssh_user
@@ -220,3 +222,7 @@ class TestBasicScenario(manager.NetworkScenarioTest):
     def test_check_vm_connectivity_net(self):
         self._check_vm_connectivity_net()
 
+    @attr(type='smoke')
+    @services('compute', 'network')
+    def test_check_vm_connectivity_port(self):
+        self._check_vm_connectivity_port()
