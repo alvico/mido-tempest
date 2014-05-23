@@ -179,12 +179,13 @@ class TestBasicScenario(manager.NetworkScenarioTest):
             self.assertEqual(True, failed, "No ping to VM as expected")
 
     def _check_vm_connectivity_admin_state_up(self):
-        admin_state_up = True
         for router in self.routers:
-            self.network_client.update_router(router.id, admin_state_up=False)
+            router["admin_state_up"] = False
+            self.network_client.update_router(router.id, router.__dict__)
             pprint("router test")
             self._do_test_vm_connectivity_admin_state_up(router)
-            self.network_client.update_router(router.id, admin_state_up=True)
+            router["admin_state_up"] = True
+            self.network_client.update_router(router.id, router.__dict__)
         for network in self.networks:
             self.network_client.update_network(network.id, admin_state_up=False)
             self._do_test_vm_connectivity_admin_state_up(network)
