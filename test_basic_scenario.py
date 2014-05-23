@@ -180,21 +180,12 @@ class TestBasicScenario(manager.NetworkScenarioTest):
 
     def _check_vm_connectivity_admin_state_up(self):
         for router in self.routers:
-            body = dict(
-                router=dict(
-                    name=router.name,
-                    external_gateway_info=None,
-                    admin_state_up=False,
-                    id=router.id,
-                    tenant_id=self.tenant_id,
-                ),
-             )
             router["admin_state_up"] = False
-            self.network_client.update_router(router.id, body=body)
+            self.network_client.update_router(router.id, {'router': {'admin_state_up': False}})
             pprint("router test")
             self._do_test_vm_connectivity_admin_state_up(router)
             router["admin_state_up"] = True
-            self.network_client.update_router(router.id, body=router.__dict__)
+            self.network_client.update_router(router.id, {'router': {'admin_state_up': True}})
         for network in self.networks:
             self.network_client.update_network(network.id, network)
             self._do_test_vm_connectivity_admin_state_up(network)
