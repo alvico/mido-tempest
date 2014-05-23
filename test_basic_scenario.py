@@ -172,6 +172,7 @@ class TestBasicScenario(manager.NetworkScenarioTest):
         failed = False
         self._set_admin_state_up(item)
         pprint(item)
+        pprint(self._get_router(self.tenant_id))
         try:
             self._check_public_network_connectivity()
             #self._set_admin_state_up(item)
@@ -200,7 +201,7 @@ class TestBasicScenario(manager.NetworkScenarioTest):
                     ip_address = floating_ip.floating_ip_address
                     pprint("my ip address")
                     pprint(ip_address)
-                    pprint(self._check_vm_connectivity(ip_address, ssh_login, private_key))
+                    self._check_vm_connectivity(ip_address, ssh_login, private_key)
         except Exception as exc:
             LOG.exception(exc)
             debug.log_ip_ns()
