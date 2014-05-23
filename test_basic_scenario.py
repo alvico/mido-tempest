@@ -57,7 +57,18 @@ class TestBasicScenario(manager.NetworkScenarioTest):
         cls.routers = []
         cls.servers = []
         cls.floating_ips = {}
-        cls._basic_scenario(cls)
+        cls.basic_scenario()
+
+    @classmethod
+    def basic_scenario(cls):
+        #super(TestBasicScenario, cls).basic_scenario()
+        cls._create_keypairs()
+        cls._create_security_groups()
+        cls._create_networks()
+        cls._check_networks()
+        cls._create_servers()
+        cls._assign_floating_ips()
+        cls._check_public_network_connectivity()
 
     def _get_router(self, tenant_id):
         """Retrieve a router for the given tenant id.
@@ -208,15 +219,6 @@ class TestBasicScenario(manager.NetworkScenarioTest):
             LOG.exception(exc)
             debug.log_ip_ns()
             raise exceptions.TimeoutException
-
-    def _basic_scenario(self):
-        self._create_keypairs()
-        self._create_security_groups()
-        self._create_networks()
-        self._check_networks()
-        self._create_servers()
-        self._assign_floating_ips()
-        self._check_public_network_connectivity()
 
     @attr(type='smoke')
     @services('compute', 'network')
