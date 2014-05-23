@@ -171,7 +171,6 @@ class TestBasicScenario(manager.NetworkScenarioTest):
             self._check_public_network_connectivity()
             #self._set_admin_state_up(item)
         except Exception as exc:
-            pprint("enters _do_test_vm_connectivity_admin_state_up")
             failed = True
             #raise exceptions.TimeoutException
         finally:
@@ -187,9 +186,9 @@ class TestBasicScenario(manager.NetworkScenarioTest):
             router["admin_state_up"] = True
             self.network_client.update_router(router.id, {'router': {'admin_state_up': True}})
         for network in self.networks:
-            self.network_client.update_network(network.id, network)
+            self.network_client.update_network(network.id, {'network': {'admin_state_up': False}})
             self._do_test_vm_connectivity_admin_state_up(network)
-            self.network_client.update_network(network.id, network)
+            self.network_client.update_network(network.id, {'network': {'admin_state_up': False}})
         #TO-DO: Test-Ports
 
     def _check_public_network_connectivity(self):
