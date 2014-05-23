@@ -167,8 +167,7 @@ class TestBasicScenario(manager.NetworkScenarioTest):
         try:
             self._check_public_network_connectivity()
         except Exception as exc:
-            if exc.message.startswith("Timed out waiting for "):
-                must_fail = True
+            must_fail = True
         finally:
             self.assertEqual(must_fail, True, "No connection to VM")
 
@@ -221,18 +220,18 @@ class TestBasicScenario(manager.NetworkScenarioTest):
 
     @attr(type='smoke')
     @services('compute', 'network')
-    def test_check_vm_connectivity_router(self):
+    def test_admin_state_up_router(self):
         self._check_vm_connectivity_router()
         self._check_public_network_connectivity()
 
     @attr(type='smoke')
     @services('compute', 'network')
-    def test_check_vm_connectivity_net(self):
+    def test_admin_state_up_net(self):
         self._check_vm_connectivity_net()
         self._check_public_network_connectivity()
 
     @attr(type='smoke')
     @services('compute', 'network')
-    def test_check_vm_connectivity_port(self):
+    def test_admin_state_up_port(self):
         self._check_vm_connectivity_port()
         self._check_public_network_connectivity()
