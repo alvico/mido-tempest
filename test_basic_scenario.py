@@ -188,11 +188,6 @@ class TestBasicScenario(manager.NetworkScenarioTest):
             self._do_test_vm_connectivity_admin_state_up(network)
             self.network_client.update_network(network.id, {'network': {'admin_state_up': True}})
 
-'''
-    def _check_vm_connectivity_net(self):
-        #TODO Ports
-'''
-
     def _check_public_network_connectivity(self):
         ssh_login = self.config.compute.image_ssh_user
         private_key = self.keypairs[self.tenant_id].private_key
