@@ -170,6 +170,8 @@ class TestBasicScenario(manager.NetworkScenarioTest):
             self._check_public_network_connectivity()
         except Exception as exc:
             must_fail = True
+            LOG.exception(exc)
+            debug.log_ip_ns()
         finally:
             self.assertEqual(must_fail, True, "No connection to VM")
 
@@ -188,6 +190,7 @@ class TestBasicScenario(manager.NetworkScenarioTest):
             self.network_client.update_network(network.id, {'network': {'admin_state_up': True}})
 
     def _check_vm_connectivity_port(self):
+        pprint("port test")
         resp, body = self.client.list_ports()
         self.assertEqual('200', resp['status'])
         ports_list = body['ports']
@@ -210,7 +213,9 @@ class TestBasicScenario(manager.NetworkScenarioTest):
             raise exceptions.TimeoutException
 
     def basic_scenario(self):
-        if  self.basic_scenario_flag:
+        pprint("basic scenario is up?")
+        pprint(self.basic_scenario_flag)
+        if self.basic_scenario_flag:
             self._create_keypairs()
             self._create_security_groups()
             self._create_networks()
@@ -218,7 +223,7 @@ class TestBasicScenario(manager.NetworkScenarioTest):
             self._create_servers()
             self._assign_floating_ips()
             self._check_public_network_connectivity()
-            self.basic_scenario_up = False
+            self.basic_scenario_flag = False
 
 
     @attr(type='smoke')
