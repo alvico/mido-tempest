@@ -165,14 +165,15 @@ class TestBasicScenario(manager.NetworkScenarioTest):
             self.floating_ips[server].append(floating_ip)
 
     def _set_admin_state_up(self, item):
-        item["admin_state_up"] = not item.get("admin_state_up")
+        pprint(item)
+        admin_state_up = item.get("admin_state_up")
+        item["admin_state_up"] = not admin_state_up
         item.update()
 
     def _do_test_vm_connectivity_admin_state_up(self, item):
         failed = False
         self._set_admin_state_up(item)
         pprint(item)
-        pprint(self._get_router(self.tenant_id))
         try:
             self._check_public_network_connectivity()
             #self._set_admin_state_up(item)
@@ -185,8 +186,8 @@ class TestBasicScenario(manager.NetworkScenarioTest):
             self.assertEqual(True, failed, "No ping to VM as expected")
 
     def _check_vm_connectivity_admin_state_up(self):
-        router = self._get_router(self.tenant_id)
-        self._do_test_vm_connectivity_admin_state_up(router)
+        for router in self.routers:
+            self._do_test_vm_connectivity_admin_state_up(router)
         for network in self.networks:
             self._do_test_vm_connectivity_admin_state_up(network)
         for server in self.servers:
