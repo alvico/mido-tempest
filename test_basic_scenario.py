@@ -182,11 +182,13 @@ class TestBasicScenario(manager.NetworkScenarioTest):
         for router in self.routers:
             router["admin_state_up"] = False
             self.network_client.update_router(router)
+            pprint("router test")
             self._do_test_vm_connectivity_admin_state_up(router)
             router["admin_state_up"] = True
             self.network_client.update_router(router)
         for network in self.networks:
             network["admin_state_up"] = False
+            pprint("network test")
             self.network_client.update_network(network)
             self._do_test_vm_connectivity_admin_state_up(network)
             network["admin_state_up"] = True
