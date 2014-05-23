@@ -174,18 +174,16 @@ class TestBasicScenario(manager.NetworkScenarioTest):
             failed = True
             #raise exceptions.TimeoutException
         finally:
-            self._set_admin_state_up(item)
             self.assertEqual(True, failed, "No ping to VM as expected")
 
     def _check_vm_connectivity_admin_state_up(self):
         for router in self.routers:
-            router["admin_state_up"] = False
             self.network_client.update_router(router.id, {'router': {'admin_state_up': False}})
             pprint("router test")
             self._do_test_vm_connectivity_admin_state_up(router)
-            router["admin_state_up"] = True
             self.network_client.update_router(router.id, {'router': {'admin_state_up': True}})
         for network in self.networks:
+            pprint("network test")
             self.network_client.update_network(network.id, {'network': {'admin_state_up': False}})
             self._do_test_vm_connectivity_admin_state_up(network)
             self.network_client.update_network(network.id, {'network': {'admin_state_up': False}})
