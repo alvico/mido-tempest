@@ -44,7 +44,7 @@ class TestBasicScenario(manager.NetworkScenarioTest):
                    'public_network_id must be defined.')
             cls.enabled = False
             raise cls.skipException(msg)
-        cls._basic_scenario()
+
 
     @classmethod
     def setUpClass(cls):
@@ -57,6 +57,7 @@ class TestBasicScenario(manager.NetworkScenarioTest):
         cls.routers = []
         cls.servers = []
         cls.floating_ips = {}
+        cls._basic_scenario(cls)
 
     def _get_router(self, tenant_id):
         """Retrieve a router for the given tenant id.
