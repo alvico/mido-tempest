@@ -166,11 +166,9 @@ class TestBasicScenario(manager.NetworkScenarioTest):
         failed = False
         pprint(item)
         try:
-            self._check_public_network_connectivity()
-            #self._set_admin_state_up(item)
+            self.assertRaises(exceptions.TimeoutException, self._check_public_network_connectivity())
         except Exception as exc:
             failed = True
-            #raise exceptions.TimeoutException
         finally:
             self.assertEqual(True, failed, "No ping to VM as expected")
 
@@ -195,15 +193,11 @@ class TestBasicScenario(manager.NetworkScenarioTest):
             for server, floating_ips in self.floating_ips.iteritems():
                 for floating_ip in floating_ips:
                     ip_address = floating_ip.floating_ip_address
-                    pprint("my ip address")
-                    pprint(ip_address)
                     self._check_vm_connectivity(ip_address, ssh_login, private_key)
         except Exception as exc:
-            #LOG.exception(exc)
-            #debug.log_ip_ns()
+            LOG.exception(exc)
+            debug.log_ip_ns()
             raise exceptions.TimeoutException
-
-
 
     @attr(type='smoke')
     @services('compute', 'network')
