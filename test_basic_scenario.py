@@ -211,7 +211,7 @@ class TestBasicScenario(manager.NetworkScenarioTest):
         except Exception as exc:
             LOG.exception(exc)
             debug.log_ip_ns()
-            raise exceptions.TimeoutException
+            raise exc
 
     def basic_scenario(self):
         self._create_keypairs()
@@ -238,6 +238,7 @@ class TestBasicScenario(manager.NetworkScenarioTest):
         self.basic_scenario()
         self._check_vm_connectivity_net()
         self._check_public_network_connectivity()
+        self.tearDown()
 
     @attr(type='smoke')
     @services('compute', 'network')
@@ -245,3 +246,4 @@ class TestBasicScenario(manager.NetworkScenarioTest):
         self.basic_scenario()
         self._check_vm_connectivity_port()
         self._check_public_network_connectivity()
+        self.tearDown()
