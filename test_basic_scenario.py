@@ -192,8 +192,9 @@ class TestBasicScenario(manager.NetworkScenarioTest):
     def _check_vm_connectivity_port(self):
         pprint("port test")
         ports_list = self.network_client.list_ports()
-        for port in ports_list:
+        for port in ports_list['ports']:
             pprint(port)
+            pprint("A port")
             #self.network_client.update_network(port.id, {'port': {'admin_state_up': False}})
             #self._do_test_vm_connectivity_admin_state_up(port)
             #self.network_client.update_network(port.id, {'port': {'admin_state_up': True}})
