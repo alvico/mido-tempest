@@ -195,8 +195,8 @@ class TestBasicScenario(manager.NetworkScenarioTest):
         for port in ports_list['ports']:
             for server, floating_ips in self.floating_ips.iteritems():
                 for floating_ip in floating_ips:
-                    pprint(port.get("fixed_ips")[0])
-                    if port.get("fixed_ips")[0] == floating_ip:
+                    pprint(port.get("fixed_ips")[0].get("ip_address"))
+                    if port.get("fixed_ips")[0].get("ip_address") == floating_ip:
                         pprint(port)
                 #    self.network_client.update_network(port.id, {'port': {'admin_state_up': False}})
                 #    self._do_test_vm_connectivity_admin_state_up()
@@ -231,17 +231,17 @@ class TestBasicScenario(manager.NetworkScenarioTest):
     @services('compute', 'network')
     def test_admin_state_up(self):
         self.basic_scenario()
-        LOG.info("Starting Router test")
-        self._check_vm_connectivity_router()
-        self._check_public_network_connectivity()
-        pprint("End of Rotuer test")
-        LOG.info("Starting Network test")
-        self._check_vm_connectivity_net()
-        self._check_public_network_connectivity()
-        pprint("End of Net test")
+        #LOG.info("Starting Router test")
+        #self._check_vm_connectivity_router()
+        #self._check_public_network_connectivity()
+        #pprint("End of Rotuer test")
+        #LOG.info("Starting Network test")
+        #self._check_vm_connectivity_net()
+        #self._check_public_network_connectivity()
+        #pprint("End of Net test")
         LOG.info("Starting Port test")
         self._check_vm_connectivity_port()
         pprint("End of Port test")
-        self._check_public_network_connectivity()
+        #self._check_public_network_connectivity()
 
 
