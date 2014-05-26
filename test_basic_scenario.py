@@ -196,7 +196,7 @@ class TestBasicScenario(manager.NetworkScenarioTest):
                 pprint(floating_ip)
                 port_id = floating_ip.get("port_id")
                 pprint(port_id)
-                self.network_client.update_network(port_id, {'port': {'admin_state_up': False}})
+                self.network_client.update_port(port_id, {'port': {'admin_state_up': False}})
                 self._do_test_vm_connectivity_admin_state_up()
                 self.network_client.update_port(port_id, {'port': {'admin_state_up': True}})
 
