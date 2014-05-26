@@ -191,16 +191,14 @@ class TestBasicScenario(manager.NetworkScenarioTest):
 
     def _check_vm_connectivity_port(self):
         pprint("port test")
-        ports_list = self.network_client.list_ports()
-        for port in ports_list['ports']:
-            for server, floating_ips in self.floating_ips.iteritems():
-                for floating_ip in floating_ips:
-                    pprint(port.get("fixed_ips")[0].get("ip_address"))
-                    if port.get("fixed_ips")[0].get("ip_address") == floating_ip:
-                        pprint(port)
-                #    self.network_client.update_network(port.id, {'port': {'admin_state_up': False}})
-                #    self._do_test_vm_connectivity_admin_state_up()
-                #    self.network_client.update_network(port.id, {'port': {'admin_state_up': True}})
+        for server, floating_ips in self.floating_ips.iteritems():
+            for floating_ip in floating_ips:
+                pprint(floating_ip)
+                port_id = floating_ip.get("port_id")
+                pprint(port_id)
+                self.network_client.update_network(port_id, {'port': {'admin_state_up': False}})
+                self._do_test_vm_connectivity_admin_state_up()
+                self.network_client.update_network(port_id, {'port': {'admin_state_up': True}})
 
     def _check_public_network_connectivity(self):
         ssh_login = self.config.compute.image_ssh_user
