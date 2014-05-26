@@ -252,16 +252,22 @@ class TestBasicScenario(manager.NetworkScenarioTest):
     @services('compute', 'network')
     def test_admin_state_up(self):
         self.basic_scenario()
+        observed = False
         LOG.info("Starting Router test")
         self._check_vm_connectivity_router()
-        self.assertEqual(True, self._check_public_network_connectivity())
+        observed = self._check_public_network_connectivity()
+        self.assertEqual(True, observed)
         pprint("End of Rotuer test")
         LOG.info("Starting Network test")
-        self.assertEqual(True, self._check_vm_connectivity_net())
+        observed = False
+        observed = self._check_vm_connectivity_net()
+        self.assertEqual(True, observed)
         self._check_public_network_connectivity()
         pprint("End of Net test")
         LOG.info("Starting Port test")
-        self.assertEqual(True, self._check_vm_connectivity_port())
+        observed = False
+        observed = self._check_vm_connectivity_port()
+        self.assertEqual(True, observed)
         pprint("End of Port test")
         self._check_public_network_connectivity()
 
