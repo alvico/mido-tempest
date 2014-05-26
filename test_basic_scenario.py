@@ -203,7 +203,7 @@ class TestBasicScenario(manager.NetworkScenarioTest):
             #LOG.exception(exc)
             #debug.log_ip_ns()
             must_work = False
-            raise exc
+            #raise exc
         finally:
             return must_work
 
@@ -222,7 +222,7 @@ class TestBasicScenario(manager.NetworkScenarioTest):
             #LOG.exception(exc)
             #debug.log_ip_ns()
             must_work = False
-            raise exc
+            #raise exc
         finally:
             return must_work
 
