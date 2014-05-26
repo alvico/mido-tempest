@@ -34,7 +34,6 @@ LOG = logging.getLogger(__name__)
 class TestBasicScenario(manager.NetworkScenarioTest):
 
     CONF = config.TempestConfig()
-    BASIC_SETUP = False
 
     @classmethod
     def check_preconditions(cls):
@@ -58,7 +57,7 @@ class TestBasicScenario(manager.NetworkScenarioTest):
         cls.routers = []
         cls.servers = []
         cls.floating_ips = {}
-        cls.BASIC_SETUP = True
+
 
 
     def _get_router(self, tenant_id):
@@ -215,16 +214,12 @@ class TestBasicScenario(manager.NetworkScenarioTest):
             raise exceptions.TimeoutException
 
     def basic_scenario(self):
-        pprint("basic scenario needs to be set up?")
-        pprint(self.BASIC_SETUP)
-        if self.BASIC_SETUP:
-            self._create_keypairs()
-            self._create_security_groups()
-            self._create_networks()
-            self._check_networks()
-            self._create_servers()
-            self._assign_floating_ips()
-            self.BASIC_SETUP = False
+        self._create_keypairs()
+        self._create_security_groups()
+        self._create_networks()
+        self._check_networks()
+        self._create_servers()
+        self._assign_floating_ips()
         self._check_public_network_connectivity()
 
 
@@ -235,6 +230,7 @@ class TestBasicScenario(manager.NetworkScenarioTest):
         self.basic_scenario()
         self._check_vm_connectivity_router()
         self._check_public_network_connectivity()
+        self.tearDown()
 
     @attr(type='smoke')
     @services('compute', 'network')
