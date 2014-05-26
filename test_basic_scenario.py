@@ -195,7 +195,8 @@ class TestBasicScenario(manager.NetworkScenarioTest):
         for port in ports_list['ports']:
             for server, floating_ips in self.floating_ips.iteritems():
                 for floating_ip in floating_ips:
-                    if port["fixed_ips"]["ip_address"] == floating_ip:
+                    pprint(port.get("fixed_ips")[0])
+                    if port.get("fixed_ips")[0] == floating_ip:
                         pprint(port)
                 #    self.network_client.update_network(port.id, {'port': {'admin_state_up': False}})
                 #    self._do_test_vm_connectivity_admin_state_up()
