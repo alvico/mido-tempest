@@ -198,7 +198,7 @@ class TestBasicScenario(manager.NetworkScenarioTest):
                 pprint(port_id)
                 self.network_client.update_network(port_id, {'port': {'admin_state_up': False}})
                 self._do_test_vm_connectivity_admin_state_up()
-                self.network_client.update_network(port_id, {'port': {'admin_state_up': True}})
+                self.network_client.update_port(port_id, {'port': {'admin_state_up': True}})
 
     def _check_public_network_connectivity(self):
         ssh_login = self.config.compute.image_ssh_user
