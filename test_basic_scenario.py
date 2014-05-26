@@ -170,8 +170,8 @@ class TestBasicScenario(manager.NetworkScenarioTest):
             self._check_public_network_connectivity()
         except Exception as exc:
             must_fail = True
-            LOG.exception(exc)
-            debug.log_ip_ns()
+            #LOG.exception(exc)
+            #debug.log_ip_ns()
         finally:
             self.assertEqual(must_fail, True, "No connection to VM")
 
@@ -184,10 +184,10 @@ class TestBasicScenario(manager.NetworkScenarioTest):
                 self._do_test_vm_connectivity_admin_state_up()
                 self.network_client.update_router(router.id, {'router': {'admin_state_up': True}})
         except Exception as exc:
-            LOG.exception(exc)
-            debug.log_ip_ns()
+            #LOG.exception(exc)
+            #debug.log_ip_ns()
             must_work = False
-            raise exc
+            #raise exc
         finally:
             return must_work
 
@@ -200,8 +200,8 @@ class TestBasicScenario(manager.NetworkScenarioTest):
                 self._do_test_vm_connectivity_admin_state_up()
                 self.network_client.update_network(network.id, {'network': {'admin_state_up': True}})
         except Exception as exc:
-            LOG.exception(exc)
-            debug.log_ip_ns()
+            #LOG.exception(exc)
+            #debug.log_ip_ns()
             must_work = False
             raise exc
         finally:
@@ -219,8 +219,8 @@ class TestBasicScenario(manager.NetworkScenarioTest):
                     self._do_test_vm_connectivity_admin_state_up()
                     self.network_client.update_port(port_id, {'port': {'admin_state_up': True}})
         except Exception as exc:
-            LOG.exception(exc)
-            debug.log_ip_ns()
+            #LOG.exception(exc)
+            #debug.log_ip_ns()
             must_work = False
             raise exc
         finally:
