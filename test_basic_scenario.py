@@ -176,6 +176,7 @@ class TestBasicScenario(manager.NetworkScenarioTest):
             self.assertEqual(must_fail, True, "No connection to VM")
 
     def _check_vm_connectivity_router(self):
+        must_work = True
         try:
             for router in self.routers:
                 self.network_client.update_router(router.id, {'router': {'admin_state_up': False}})
