@@ -29,6 +29,7 @@ from tempest import exceptions
 from pprint import pprint
 
 LOG = logging.getLogger(__name__)
+global SET_UP
 
 
 class TestBasicScenario(manager.NetworkScenarioTest):
@@ -57,6 +58,7 @@ class TestBasicScenario(manager.NetworkScenarioTest):
         cls.routers = []
         cls.servers = []
         cls.floating_ips = {}
+        SET_UP = True
 
 
 
@@ -221,21 +223,23 @@ class TestBasicScenario(manager.NetworkScenarioTest):
         self._create_servers()
         self._assign_floating_ips()
         self._check_public_network_connectivity()
+        SET_UP = False
 
 
 
     @attr(type='smoke')
     @services('compute', 'network')
     def test_admin_state_up_router(self):
-        self.basic_scenario()
+        if SET_UP:
+            self.basic_scenario()
         self._check_vm_connectivity_router()
         self._check_public_network_connectivity()
-        self.tearDown()
 
     @attr(type='smoke')
     @services('compute', 'network')
     def test_admin_state_up_net(self):
-        self.basic_scenario()
+        if SET_UP:
+            self.basic_scenario()
         self._check_vm_connectivity_net()
         self._check_public_network_connectivity()
         self.tearDown()
@@ -243,7 +247,8 @@ class TestBasicScenario(manager.NetworkScenarioTest):
     @attr(type='smoke')
     @services('compute', 'network')
     def test_admin_state_up_port(self):
-        self.basic_scenario()
+        if SET_UP:
+            self.basic_scenario()
         self._check_vm_connectivity_port()
         self._check_public_network_connectivity()
         self.tearDown()
