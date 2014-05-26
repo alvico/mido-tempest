@@ -228,18 +228,16 @@ class TestBasicScenario(manager.NetworkScenarioTest):
     def test_admin_state_up(self):
         self.basic_scenario()
         LOG.info("Starting Router test")
-        pprint("Rotuer test")
         self._check_vm_connectivity_router()
         self._check_public_network_connectivity()
         pprint("End of Rotuer test")
         LOG.info("Starting Network test")
-        pprint("Net test")
         self._check_vm_connectivity_net()
         self._check_public_network_connectivity()
         pprint("End of Net test")
         LOG.info("Starting Port test")
-        pprint("Port test")
         self._check_vm_connectivity_port()
-        self._check_public_network_connectivity()
         pprint("End of Port test")
+        self._check_public_network_connectivity()
+
 
