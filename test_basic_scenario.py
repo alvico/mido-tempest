@@ -29,12 +29,11 @@ from tempest import exceptions
 from pprint import pprint
 
 LOG = logging.getLogger(__name__)
-global SET_UP
-
 
 class TestBasicScenario(manager.NetworkScenarioTest):
 
     CONF = config.TempestConfig()
+
 
     @classmethod
     def check_preconditions(cls):
@@ -58,8 +57,6 @@ class TestBasicScenario(manager.NetworkScenarioTest):
         cls.routers = []
         cls.servers = []
         cls.floating_ips = {}
-        SET_UP = True
-
 
 
     def _get_router(self, tenant_id):
@@ -198,9 +195,10 @@ class TestBasicScenario(manager.NetworkScenarioTest):
         self.assertEqual('200', resp['status'])
         ports_list = body['ports']
         for port in ports_list:
-            self.network_client.update_network(port.id, {'network': {'admin_state_up': False}})
-            self._do_test_vm_connectivity_admin_state_up(port)
-            self.network_client.update_network(port.id, {'network': {'admin_state_up': True}})
+            pprint(port)
+            #self.network_client.update_network(port.id, {'port': {'admin_state_up': False}})
+            #self._do_test_vm_connectivity_admin_state_up(port)
+            #self.network_client.update_network(port.id, {'port': {'admin_state_up': True}})
 
     def _check_public_network_connectivity(self):
         ssh_login = self.config.compute.image_ssh_user
@@ -223,32 +221,27 @@ class TestBasicScenario(manager.NetworkScenarioTest):
         self._create_servers()
         self._assign_floating_ips()
         self._check_public_network_connectivity()
-        SET_UP = False
+
 
 
 
     @attr(type='smoke')
     @services('compute', 'network')
-    def test_admin_state_up_router(self):
-        if SET_UP:
-            self.basic_scenario()
+    def test_admin_state_up(self):
+        self.basic_scenario()
+        LOG.info("Starting Router test")
+        pprint("Rotuer test")
         self._check_vm_connectivity_router()
         self._check_public_network_connectivity()
-
-    @attr(type='smoke')
-    @services('compute', 'network')
-    def test_admin_state_up_net(self):
-        if SET_UP:
-            self.basic_scenario()
+        pprint("End of Rotuer test")
+        LOG.info("Starting Network test")
+        pprint("Net test")
         self._check_vm_connectivity_net()
         self._check_public_network_connectivity()
-        self.tearDown()
-
-    @attr(type='smoke')
-    @services('compute', 'network')
-    def test_admin_state_up_port(self):
-        if SET_UP:
-            self.basic_scenario()
+        pprint("End of Net test")
+        LOG.info("Starting Port test")
+        pprint("Port test")
         self._check_vm_connectivity_port()
         self._check_public_network_connectivity()
-        self.tearDown()
+        pprint("End of Port test")
+
