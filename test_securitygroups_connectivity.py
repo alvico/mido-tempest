@@ -177,6 +177,19 @@ class TestSecurityGroup(manager.NetworkScenarioTest):
         #test if everything is ok
         #self._check_public_network_connectivity()
 
+    def _check_public_network_connectivity(self):
+        ssh_login = self.config.compute.image_ssh_user
+        private_key = self.keypairs[self.tenant_id].private_key
+        try:
+            for server, floating_ips in self.floating_ips.iteritems():
+                for floating_ip in floating_ips:
+                    ip_address = floating_ip.floating_ip_address
+                    self._check_vm_connectivity(ip_address, ssh_login, private_key)
+        except Exception as exc:
+            LOG.exception(exc)
+            debug.log_ip_ns()
+            raise exc
+
     @attr(type='smoke')
     @services('compute', 'network')
     def test_security_groups_connectivity(self):
