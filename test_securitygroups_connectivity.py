@@ -104,7 +104,8 @@ class TestSecurityGroup(manager.NetworkScenarioTest):
         self.security_groups[self.tenant_id] = self._create_security_group()
 
     def _get_default_security_group(self):
-        self.security_groups[self.tenant_id] = self.network_client.list_security_groups()
+        self.security_groups[self.tenant_id] = \
+            self.network_client.list_security_groups(retrieve_all=False, name="default")
         pprint(self.security_groups)
 
     def _create_networks(self):
