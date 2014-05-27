@@ -104,8 +104,7 @@ class TestSecurityGroup(manager.NetworkScenarioTest):
         self.security_groups[self.tenant_id] = self._create_security_group()
 
     def _get_default_security_group(self):
-        #self.security_groups[self.tenant_id] =
-        self.security_groups = self.network_client.list_security_groups()
+        self.security_groups[self.tenant_id] = self.network_client.list_security_groups()
         pprint(self.security_groups)
 
     def _create_networks(self):
@@ -169,16 +168,16 @@ class TestSecurityGroup(manager.NetworkScenarioTest):
 
     def _scenario(self):
         self._create_keypairs()
-        self._create_security_groups()
+        #self._create_security_groups()
+        self._get_default_security_group()
         self._create_networks()
         self._check_networks()
         self._create_servers()
         self._assign_floating_ips()
         #test if everything is ok
-        self._check_public_network_connectivity()
+        #self._check_public_network_connectivity()
 
     @attr(type='smoke')
     @services('compute', 'network')
     def test_security_groups_connectivity(self):
-        #self._scenario()
-        self._get_default_security_group()
+        self._check_public_network_connectivity()
