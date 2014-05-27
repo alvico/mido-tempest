@@ -188,8 +188,9 @@ class TestSecurityGroup(manager.NetworkScenarioTest):
             for server, floating_ips in self.floating_ips.iteritems():
                 for floating_ip in floating_ips:
                     ip_address = floating_ip.floating_ip_address
-            pprint(ip_address)
-            self._check_vm_connectivity(ip_address, ssh_login, private_key)
+                    pprint(server.__dict__)
+                    pprint(ip_address)
+                    self._check_vm_connectivity(ip_address, ssh_login, private_key)
         except Exception as exc:
             #LOG.exception(exc)
             #debug.log_ip_ns()
