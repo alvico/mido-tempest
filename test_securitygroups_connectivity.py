@@ -107,10 +107,9 @@ class TestSecurityGroup(manager.NetworkScenarioTest):
         security_groups = self.network_client.list_security_groups()
         for key,item in security_groups.iteritems():
             myList = [i for i in item if i.get("name") == "default" and i.get("tenant_id") == self.tenant_id ]
-            #pprint(myList)    
-	    self.security_groups.update(myList[0])
-            pprint("--------------------------------")
-	    pprint(self.security_groups)
+            self.security_groups.update(myList[0])
+        #pprint("--------------------------------")
+        #pprint(self.security_groups)
 
     def _create_networks(self):
         network = self._create_network(self.tenant_id)
@@ -148,7 +147,7 @@ class TestSecurityGroup(manager.NetworkScenarioTest):
         tenant_id = network.tenant_id
         keypair_name = self.keypairs[tenant_id].name
         pprint(self.security_groups.get("name"))
-	security_groups = [self.security_groups.get("name")]
+        security_groups = [self.security_groups.get("name")]
         create_kwargs = {
             'nics': [
                 {'net-id': network.id},
@@ -189,10 +188,9 @@ class TestSecurityGroup(manager.NetworkScenarioTest):
             for server, floating_ips in self.floating_ips.iteritems():
                 for floating_ip in floating_ips:
                     ip_address = floating_ip.floating_ip_address
-		    pprint(ip_address)
-	   	    pprint("########################")
-		    pprint(server)
-                    self._check_vm_connectivity(ip_address, ssh_login, private_key)
+            pprint(ip_address)
+            #pprint("########################")
+            self._check_vm_connectivity(ip_address, ssh_login, private_key)
         except Exception as exc:
             LOG.exception(exc)
             debug.log_ip_ns()
