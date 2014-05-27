@@ -58,7 +58,6 @@ class TestBasicScenario(manager.NetworkScenarioTest):
         cls.servers = []
         cls.floating_ips = {}
 
-
     def _get_router(self, tenant_id):
         """Retrieve a router for the given tenant id.
 
@@ -170,60 +169,33 @@ class TestBasicScenario(manager.NetworkScenarioTest):
             self._check_public_network_connectivity()
         except Exception as exc:
             must_fail = True
-            #LOG.exception(exc)
-            #debug.log_ip_ns()
+            LOG.exception(exc)
+            debug.log_ip_ns()
         finally:
             self.assertEqual(must_fail, True, "No connection to VM")
 
     def _check_vm_connectivity_router(self):
-        must_work = True
-        try:
-            for router in self.routers:
-                self.network_client.update_router(router.id, {'router': {'admin_state_up': False}})
-                pprint("router test")
-                self._do_test_vm_connectivity_admin_state_up()
-                self.network_client.update_router(router.id, {'router': {'admin_state_up': True}})
-        except Exception as exc:
-            #LOG.exception(exc)
-            #debug.log_ip_ns()
-            must_work = False
-            #raise exc
-        finally:
-            return must_work
+        for router in self.routers:
+            self.network_client.update_router(router.id, {'router': {'admin_state_up': False}})
+            pprint("router test")
+            self._do_test_vm_connectivity_admin_state_up()
+            self.network_client.update_router(router.id, {'router': {'admin_state_up': True}})
 
     def _check_vm_connectivity_net(self):
-        must_work = True
-        try:
-            for network in self.networks:
-                pprint("network test")
-                self.network_client.update_network(network.id, {'network': {'admin_state_up': False}})
-                self._do_test_vm_connectivity_admin_state_up()
-                self.network_client.update_network(network.id, {'network': {'admin_state_up': True}})
-        except Exception as exc:
-            #LOG.exception(exc)
-            #debug.log_ip_ns()
-            must_work = False
-            #raise exc
-        finally:
-            return must_work
+        for network in self.networks:
+            pprint("network test")
+            self.network_client.update_network(network.id, {'network': {'admin_state_up': False}})
+            self._do_test_vm_connectivity_admin_state_up()
+            self.network_client.update_network(network.id, {'network': {'admin_state_up': True}})
 
     def _check_vm_connectivity_port(self):
         pprint("port test")
-        must_work = True
-        try:
-            for server, floating_ips in self.floating_ips.iteritems():
-                for floating_ip in floating_ips:
-                    port_id = floating_ip.get("port_id")
-                    self.network_client.update_port(port_id, {'port': {'admin_state_up': False}})
-                    self._do_test_vm_connectivity_admin_state_up()
-                    self.network_client.update_port(port_id, {'port': {'admin_state_up': True}})
-        except Exception as exc:
-            #LOG.exception(exc)
-            #debug.log_ip_ns()
-            must_work = False
-            #raise exc
-        finally:
-            return must_work
+        for server, floating_ips in self.floating_ips.iteritems():
+            for floating_ip in floating_ips:
+                port_id = floating_ip.get("port_id")
+                self.network_client.update_port(port_id, {'port': {'admin_state_up': False}})
+                self._do_test_vm_connectivity_admin_state_up()
+                self.network_client.update_port(port_id, {'port': {'admin_state_up': True}})
 
     def _check_public_network_connectivity(self):
         ssh_login = self.config.compute.image_ssh_user
@@ -232,6 +204,7 @@ class TestBasicScenario(manager.NetworkScenarioTest):
             for server, floating_ips in self.floating_ips.iteritems():
                 for floating_ip in floating_ips:
                     ip_address = floating_ip.floating_ip_address
+                    pprint(server.__dict__)
                     self._check_vm_connectivity(ip_address, ssh_login, private_key)
         except Exception as exc:
             LOG.exception(exc)
@@ -251,22 +224,16 @@ class TestBasicScenario(manager.NetworkScenarioTest):
     @services('compute', 'network')
     def test_admin_state_up(self):
         self.basic_scenario()
-        observed = False
         LOG.info("Starting Router test")
         self._check_vm_connectivity_router()
-        observed = self._check_public_network_connectivity()
-        self.assertEqual(True, observed)
+        self._check_public_network_connectivity()
         pprint("End of Rotuer test")
         LOG.info("Starting Network test")
-        observed = False
-        observed = self._check_vm_connectivity_net()
-        self.assertEqual(True, observed)
+        self._check_vm_connectivity_net()
         self._check_public_network_connectivity()
         pprint("End of Net test")
         LOG.info("Starting Port test")
-        observed = False
-        observed = self._check_vm_connectivity_port()
-        self.assertEqual(True, observed)
+        self._check_vm_connectivity_port()
         pprint("End of Port test")
         self._check_public_network_connectivity()
 
