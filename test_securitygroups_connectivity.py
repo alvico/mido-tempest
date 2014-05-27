@@ -1,4 +1,3 @@
-
 # vim: tabstop=4 shiftwidth=4 softtabstop=4
 
 # Copyright 2012 OpenStack Foundation
@@ -30,14 +29,14 @@ from pprint import pprint
 
 LOG = logging.getLogger(__name__)
 
-class TestBasicScenario(manager.NetworkScenarioTest):
+
+class TestSecurityGroup(manager.NetworkScenarioTest):
 
     CONF = config.TempestConfig()
 
-
     @classmethod
     def check_preconditions(cls):
-        super(TestBasicScenario, cls).check_preconditions()
+        super(TestSecurityGroup, cls).check_preconditions()
         cfg = cls.config.network
         if not (cfg.tenant_networks_reachable or cfg.public_network_id):
             msg = ('Either tenant_networks_reachable must be "true", or '
@@ -48,7 +47,7 @@ class TestBasicScenario(manager.NetworkScenarioTest):
 
     @classmethod
     def setUpClass(cls):
-        super(TestBasicScenario, cls).setUpClass()
+        super(TestSecurityGroup, cls).setUpClass()
         cls.check_preconditions()
         cls.keypairs = {}
         cls.security_groups = {}
@@ -57,7 +56,6 @@ class TestBasicScenario(manager.NetworkScenarioTest):
         cls.routers = []
         cls.servers = []
         cls.floating_ips = {}
-
 
     def _get_router(self, tenant_id):
         """Retrieve a router for the given tenant id.
@@ -104,6 +102,11 @@ class TestBasicScenario(manager.NetworkScenarioTest):
 
     def _create_security_groups(self):
         self.security_groups[self.tenant_id] = self._create_security_group()
+
+    def _get_default_security_group(self):
+        #self.security_groups[self.tenant_id] =
+        self.security_groups = self.network_client.list_security_groups()
+        pprint(self.security_groups)
 
     def _create_networks(self):
         network = self._create_network(self.tenant_id)
@@ -164,110 +167,18 @@ class TestBasicScenario(manager.NetworkScenarioTest):
             self.floating_ips.setdefault(server, [])
             self.floating_ips[server].append(floating_ip)
 
-    def _do_test_vm_connectivity_admin_state_up(self):
-        must_fail = False
-        try:
-            self._check_public_network_connectivity()
-        except Exception as exc:
-            must_fail = True
-            #LOG.exception(exc)
-            #debug.log_ip_ns()
-        finally:
-            self.assertEqual(must_fail, True, "No connection to VM")
-
-    def _check_vm_connectivity_router(self):
-        must_work = True
-        try:
-            for router in self.routers:
-                self.network_client.update_router(router.id, {'router': {'admin_state_up': False}})
-                pprint("router test")
-                self._do_test_vm_connectivity_admin_state_up()
-                self.network_client.update_router(router.id, {'router': {'admin_state_up': True}})
-        except Exception as exc:
-            #LOG.exception(exc)
-            #debug.log_ip_ns()
-            must_work = False
-            #raise exc
-        finally:
-            return must_work
-
-    def _check_vm_connectivity_net(self):
-        must_work = True
-        try:
-            for network in self.networks:
-                pprint("network test")
-                self.network_client.update_network(network.id, {'network': {'admin_state_up': False}})
-                self._do_test_vm_connectivity_admin_state_up()
-                self.network_client.update_network(network.id, {'network': {'admin_state_up': True}})
-        except Exception as exc:
-            #LOG.exception(exc)
-            #debug.log_ip_ns()
-            must_work = False
-            #raise exc
-        finally:
-            return must_work
-
-    def _check_vm_connectivity_port(self):
-        pprint("port test")
-        must_work = True
-        try:
-            for server, floating_ips in self.floating_ips.iteritems():
-                for floating_ip in floating_ips:
-                    port_id = floating_ip.get("port_id")
-                    self.network_client.update_port(port_id, {'port': {'admin_state_up': False}})
-                    self._do_test_vm_connectivity_admin_state_up()
-                    self.network_client.update_port(port_id, {'port': {'admin_state_up': True}})
-        except Exception as exc:
-            #LOG.exception(exc)
-            #debug.log_ip_ns()
-            must_work = False
-            #raise exc
-        finally:
-            return must_work
-
-    def _check_public_network_connectivity(self):
-        ssh_login = self.config.compute.image_ssh_user
-        private_key = self.keypairs[self.tenant_id].private_key
-        try:
-            for server, floating_ips in self.floating_ips.iteritems():
-                for floating_ip in floating_ips:
-                    ip_address = floating_ip.floating_ip_address
-                    self._check_vm_connectivity(ip_address, ssh_login, private_key)
-        except Exception as exc:
-            LOG.exception(exc)
-            debug.log_ip_ns()
-            raise exc
-
-    def basic_scenario(self):
+    def _scenario(self):
         self._create_keypairs()
         self._create_security_groups()
         self._create_networks()
         self._check_networks()
         self._create_servers()
         self._assign_floating_ips()
+        #test if everything is ok
         self._check_public_network_connectivity()
 
     @attr(type='smoke')
     @services('compute', 'network')
-    def test_admin_state_up(self):
-        self.basic_scenario()
-        observed = False
-        LOG.info("Starting Router test")
-        self._check_vm_connectivity_router()
-        observed = self._check_public_network_connectivity()
-        self.assertEqual(True, observed)
-        pprint("End of Rotuer test")
-        LOG.info("Starting Network test")
-        observed = False
-        observed = self._check_vm_connectivity_net()
-        self.assertEqual(True, observed)
-        self._check_public_network_connectivity()
-        pprint("End of Net test")
-        LOG.info("Starting Port test")
-        observed = False
-        observed = self._check_vm_connectivity_port()
-        self.assertEqual(True, observed)
-        pprint("End of Port test")
-        self._check_public_network_connectivity()
-
-
+    def test_security_groups_connectivity(self):
+        #self._scenario()
+        self._get_default_security_group()
