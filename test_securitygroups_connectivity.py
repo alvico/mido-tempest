@@ -87,8 +87,8 @@ class TestSecurityGroup(manager.NetworkScenarioTest):
                 name=name,
                 admin_state_up=True,
                 tenant_id=tenant_id,
-            ),
-        )
+                ),
+            )
         result = self.network_client.create_router(body=body)
         router = net_common.DeletableRouter(client=self.network_client,
                                             **result['router'])
@@ -104,8 +104,16 @@ class TestSecurityGroup(manager.NetworkScenarioTest):
         self.security_groups[self.tenant_id] = self._create_security_group()
 
     def _get_default_security_group(self):
+        get_kwargs = {
+            "security_groups":[
+                {
+                    "description":"default",
+                    "name":"default"
+                }
+            ]
+        }
         self.security_groups[self.tenant_id] = \
-            self.network_client.list_security_groups(retrieve_all=False, name="default")
+            self.network_client.list_security_groups(retrieve_all=False, get_kwargs)
         pprint(self.security_groups)
 
     def _create_networks(self):
@@ -147,10 +155,10 @@ class TestSecurityGroup(manager.NetworkScenarioTest):
         create_kwargs = {
             'nics': [
                 {'net-id': network.id},
-            ],
+                ],
             'key_name': keypair_name,
             'security_groups': security_groups,
-        }
+            }
         server = self.create_server(name=name, create_kwargs=create_kwargs)
         return server
 
