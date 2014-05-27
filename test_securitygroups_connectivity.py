@@ -194,4 +194,5 @@ class TestSecurityGroup(manager.NetworkScenarioTest):
     @attr(type='smoke')
     @services('compute', 'network')
     def test_security_groups_connectivity(self):
+        self._scenario()
         self._check_public_network_connectivity()
