@@ -106,9 +106,11 @@ class TestSecurityGroup(manager.NetworkScenarioTest):
     def _get_default_security_group(self):
         security_groups = self.network_client.list_security_groups()
         for key,item in security_groups.iteritems():
-            [i for i in item if i.get("name") == "default" and i.get("tenant_id") == self.tenant_id ]
-            self.security_groups.update(i[0])
-        pprint(self.security_groups)
+            myList = [i for i in item if i.get("name") == "default" and i.get("tenant_id") == self.tenant_id ]
+            #pprint(myList)    
+	    self.security_groups.update(myList[0])
+            pprint("--------------------------------")
+	    pprint(self.security_groups)
 
     def _create_networks(self):
         network = self._create_network(self.tenant_id)
@@ -145,7 +147,8 @@ class TestSecurityGroup(manager.NetworkScenarioTest):
     def _create_server(self, name, network):
         tenant_id = network.tenant_id
         keypair_name = self.keypairs[tenant_id].name
-        security_groups = [self.security_groups[tenant_id].name]
+        pprint(self.security_groups.get("name"))
+	security_groups = [self.security_groups.get("name")]
         create_kwargs = {
             'nics': [
                 {'net-id': network.id},
@@ -178,7 +181,6 @@ class TestSecurityGroup(manager.NetworkScenarioTest):
         self._create_servers()
         self._assign_floating_ips()
         #test if everything is ok
-        #self._check_public_network_connectivity()
 
     def _check_public_network_connectivity(self):
         ssh_login = self.config.compute.image_ssh_user
@@ -187,6 +189,9 @@ class TestSecurityGroup(manager.NetworkScenarioTest):
             for server, floating_ips in self.floating_ips.iteritems():
                 for floating_ip in floating_ips:
                     ip_address = floating_ip.floating_ip_address
+		    pprint(ip_address)
+	   	    pprint("########################")
+		    pprint(server)
                     self._check_vm_connectivity(ip_address, ssh_login, private_key)
         except Exception as exc:
             LOG.exception(exc)
