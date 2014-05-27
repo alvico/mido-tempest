@@ -189,11 +189,10 @@ class TestSecurityGroup(manager.NetworkScenarioTest):
                 for floating_ip in floating_ips:
                     ip_address = floating_ip.floating_ip_address
             pprint(ip_address)
-            #pprint("########################")
             self._check_vm_connectivity(ip_address, ssh_login, private_key)
         except Exception as exc:
-            LOG.exception(exc)
-            debug.log_ip_ns()
+            #LOG.exception(exc)
+            #debug.log_ip_ns()
             raise exc
 
     @attr(type='smoke')
