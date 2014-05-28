@@ -198,6 +198,8 @@ class TestMetaData(manager.NetworkScenarioTest):
                                 pkey=private_key,
                                 timeout=self.config.compute.ssh_timeout)
                     result = ssh_client.exec_command("curl http://169.254.169.254")
+                    pprint("")
+                    pprint("_check_metadata curl result:")
                     pprint(result)
         except Exception as exc:
             raise exc
