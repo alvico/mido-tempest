@@ -198,9 +198,9 @@ class TestMetaData(manager.NetworkScenarioTest):
                                 pkey=private_key,
                                 timeout=self.config.compute.ssh_timeout)
                     result = ssh_client.exec_command("curl http://169.254.169.254")
-                    pprint("")
-                    pprint("_check_metadata curl result:")
-                    pprint(result)
+                    _expected = "1.0\n2007-01-19\n2007-03-01\n2007-08-29\n2007-10-10\n" \
+                                "2007-12-15\n2008-02-01\n2008-09-01\n2009-04-04\nlatest"
+                    self.assertEqual(_expected, result)
         except Exception as exc:
             raise exc
 
