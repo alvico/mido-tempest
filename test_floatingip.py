@@ -190,8 +190,8 @@ class TestMetaData(manager.NetworkScenarioTest):
             for server, floating_ips in self.floating_ips.iteritems():
                 for floating_ip in floating_ips:
                     # Disassociate floating IP from the port
-                    resp, floating_ip = self.network_client.update_floatingip(floating_ip.id, {'floatingip': {'port_id': None}})
-                    self.assertEqual('200', resp['status'])
+                    floating_ip = self.network_client.update_floatingip(floating_ip.id, {'floatingip': {'port_id': None}})
+                    #self.assertEqual('200', resp['status'])
                     update_floating_ip = floating_ip['floatingip']
                     self.assertIsNone(update_floating_ip['port_id'])
                     self.assertIsNone(update_floating_ip['fixed_ip_address'])
