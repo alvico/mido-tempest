@@ -134,7 +134,7 @@ class TestScenario(manager.NetworkScenarioTest):
                 ip_version=4,
                 network_id=network.id,
                 tenant_id=network.tenant_id,
-                cidr=str(mysubnet.cidr),
+                cidr=str(mysubnet["cidr"]),
             ),
         )
         try:
