@@ -9,7 +9,7 @@ from tempest.test import attr
 from tempest.test import services
 from tempest import exceptions
 from pprint import pprint
-from tempest.scenario.midokura.midotools import myscenario
+from tempest.scenario.midokura.midotools import scenario as myscenario
 
 LOG = logging.getLogger(__name__)
 
