@@ -1,22 +1,4 @@
 __author__ = 'Albert'
-# vim: tabstop=4 shiftwidth=4 softtabstop=4
-
-# Copyright 2012 OpenStack Foundation
-# Copyright 2013 Hewlett-Packard Development Company, L.P.
-# All Rights Reserved.
-#
-#    Licensed under the Apache License, Version 2.0 (the "License"); you may
-#    not use this file except in compliance with the License. You may obtain
-#    a copy of the License at
-#
-#         http://www.apache.org/licenses/LICENSE-2.0
-#
-#    Unless required by applicable law or agreed to in writing, software
-#    distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
-#    WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
-#    License for the specific language governing permissions and limitations
-#    under the License.
-
 from tempest.api.network import common as net_common
 from tempest.common import debug
 from tempest.common.utils.data_utils import rand_name
@@ -31,14 +13,13 @@ from pprint import pprint
 
 LOG = logging.getLogger(__name__)
 
-
-class TestMetaData(manager.NetworkScenarioTest):
+class TestScenario(manager.NetworkScenarioTest):
 
     CONF = config.TempestConfig()
 
     @classmethod
     def check_preconditions(cls):
-        super(TestMetaData, cls).check_preconditions()
+        super(TestScenario, cls).check_preconditions()
         cfg = cls.config.network
         if not (cfg.tenant_networks_reachable or cfg.public_network_id):
             msg = ('Either tenant_networks_reachable must be "true", or '
@@ -49,7 +30,7 @@ class TestMetaData(manager.NetworkScenarioTest):
 
     @classmethod
     def setUpClass(cls):
-        super(TestMetaData, cls).setUpClass()
+        super(TestScenario, cls).setUpClass()
         cls.check_preconditions()
         cls.keypairs = {}
         cls.security_groups = {}
@@ -58,6 +39,23 @@ class TestMetaData(manager.NetworkScenarioTest):
         cls.routers = []
         cls.servers = []
         cls.floating_ips = {}
+
+    def basic_scenario(self):
+        self._create_keypairs()
+        self._create_security_groups()
+        self._create_networks()
+        self._check_networks()
+        self._create_servers()
+        self._assign_floating_ips()
+
+    def custom_scenario(self, scenario):
+        self._create_keypairs()
+        self._create_security_groups()
+        for network in scenario.networks:
+            self._create_custom_networks()
+            self._check_networks()
+            for server in network.servers:
+                self._create_servers()
 
     def _get_router(self, tenant_id):
         """Retrieve a router for the given tenant id.
@@ -89,8 +87,8 @@ class TestMetaData(manager.NetworkScenarioTest):
                 name=name,
                 admin_state_up=True,
                 tenant_id=tenant_id,
-                ),
-            )
+            ),
+        )
         result = self.network_client.create_router(body=body)
         router = net_common.DeletableRouter(client=self.network_client,
                                             **result['router'])
@@ -114,28 +112,43 @@ class TestMetaData(manager.NetworkScenarioTest):
         self.subnets.append(subnet)
         self.routers.append(router)
 
-    def _check_networks(self):
-        # Checks that we see the newly created network/subnet/router via
-        # checking the result of list_[networks,routers,subnets]
-        seen_nets = self._list_networks()
-        seen_names = [n['name'] for n in seen_nets]
-        seen_ids = [n['id'] for n in seen_nets]
-        for mynet in self.networks:
-            self.assertIn(mynet.name, seen_names)
-            self.assertIn(mynet.id, seen_ids)
-        seen_subnets = self._list_subnets()
-        seen_net_ids = [n['network_id'] for n in seen_subnets]
-        seen_subnet_ids = [n['id'] for n in seen_subnets]
-        for mynet in self.networks:
-            self.assertIn(mynet.id, seen_net_ids)
-        for mysubnet in self.subnets:
-            self.assertIn(mysubnet.id, seen_subnet_ids)
-        seen_routers = self._list_routers()
-        seen_router_ids = [n['id'] for n in seen_routers]
-        seen_router_names = [n['name'] for n in seen_routers]
-        for myrouter in self.routers:
-            self.assertIn(myrouter.name, seen_router_names)
-            self.assertIn(myrouter.id, seen_router_ids)
+    def _create_custom_network(self, mynetwork):
+        network = self._create_network(self.tenant_id)
+        for mysubnet in mynetwork.subnets:
+            subnet = self._create_custom_subnet(network, mysubnet)
+        if mynetwork.router:
+            router = self._get_router(self.tenant_id)
+            subnet.add_to_router(router.id)
+            self.routers.append(router)
+        self.networks.append(network)
+        self.subnets.append(subnet)
+
+    def _create_custom_subnet(self, network, mysubnet, namestart='subnet-smoke-'):
+        """
+        Create a subnet for the given network within the cidr block
+        configured for tenant networks.
+        """
+        result = None
+        body = dict(
+            subnet=dict(
+                ip_version=4,
+                network_id=network.id,
+                tenant_id=network.tenant_id,
+                cidr=str(mysubnet.cidr),
+            ),
+        )
+        try:
+            result = self.network_client.create_subnet(body=body)
+        except exc.NeutronClientException as e:
+            is_overlapping_cidr = 'overlaps with another subnet' in str(e)
+            if not is_overlapping_cidr:
+                raise
+        self.assertIsNotNone(result, 'Unable to allocate tenant network')
+        subnet = net_common.DeletableSubnet(client=self.network_client,
+                                            **result['subnet'])
+        self.assertEqual(subnet.cidr, str(mysubnet.cidr))
+        self.set_resource(rand_name(namestart), subnet)
+        return subnet
 
     def _create_server(self, name, network):
         tenant_id = network.tenant_id
@@ -163,51 +176,3 @@ class TestMetaData(manager.NetworkScenarioTest):
             floating_ip = self._create_floating_ip(server, public_network_id)
             self.floating_ips.setdefault(server, [])
             self.floating_ips[server].append(floating_ip)
-
-    def _scenario(self):
-        self._create_keypairs()
-        self._create_security_groups()
-        self._create_networks()
-        self._check_networks()
-        self._create_servers()
-        self._assign_floating_ips()
-        self._check_is_reachable_via_ssh()
-        #test if everything is ok
-
-    def _check_is_reachable_via_ssh(self):
-        ssh_login = self.config.compute.image_ssh_user
-        private_key = self.keypairs[self.tenant_id].private_key
-        try:
-            for server, floating_ips in self.floating_ips.iteritems():
-                for floating_ip in floating_ips:
-                    ip_address = floating_ip.floating_ip_address
-                    self._is_reachable_via_ssh(ip_address, ssh_login, private_key, self.config.compute.ssh_timeout)
-        except Exception as exc:
-            #LOG.exception(exc)
-            #debug.log_ip_ns()
-            raise exc
-
-    def _check_metadata(self):
-        ssh_login = self.config.compute.image_ssh_user
-        private_key = self.keypairs[self.tenant_id].private_key
-        try:
-            for server, floating_ips in self.floating_ips.iteritems():
-                for floating_ip in floating_ips:
-                    ip_address = floating_ip.floating_ip_address
-                    ssh_client = ssh.Client(ip_address, ssh_login,
-                                pkey=private_key,
-                                timeout=self.config.compute.ssh_timeout)
-                    result = ssh_client.exec_command("curl http://169.254.169.254")
-                    _expected = "1.0\n2007-01-19\n2007-03-01\n2007-08-29\n2007-10-10\n" \
-                                "2007-12-15\n2008-02-01\n2008-09-01\n2009-04-04\nlatest"
-                    self.assertEqual(_expected, result)
-        except Exception as exc:
-            raise exc
-
-
-    @attr(type='smoke')
-    @services('compute', 'network')
-    def test_metadata(self):
-        self._scenario()
-        self._check_is_reachable_via_ssh()
-        self._check_metadata()

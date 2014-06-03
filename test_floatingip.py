@@ -1,5 +1,4 @@
 __author__ = 'Albert'
-__author__ = 'Albert'
 # vim: tabstop=4 shiftwidth=4 softtabstop=4
 
 # Copyright 2012 OpenStack Foundation
@@ -26,20 +25,19 @@ from tempest.openstack.common import log as logging
 from tempest.scenario import manager
 from tempest.test import attr
 from tempest.test import services
-from tempest.common import ssh
 from tempest import exceptions
 from pprint import pprint
 
 LOG = logging.getLogger(__name__)
 
 
-class TestMetaData(manager.NetworkScenarioTest):
+class TestFloatingIP(manager.NetworkScenarioTest):
 
     CONF = config.TempestConfig()
 
     @classmethod
     def check_preconditions(cls):
-        super(TestMetaData, cls).check_preconditions()
+        super(TestFloatingIP, cls).check_preconditions()
         cfg = cls.config.network
         if not (cfg.tenant_networks_reachable or cfg.public_network_id):
             msg = ('Either tenant_networks_reachable must be "true", or '
@@ -49,7 +47,7 @@ class TestMetaData(manager.NetworkScenarioTest):
 
     @classmethod
     def setUpClass(cls):
-        super(TestMetaData, cls).setUpClass()
+        super(TestFloatingIP, cls).setUpClass()
         cls.check_preconditions()
         cls.keypairs = {}
         cls.security_groups = {}
@@ -191,7 +189,6 @@ class TestMetaData(manager.NetworkScenarioTest):
                 for floating_ip in floating_ips:
                     # Disassociate floating IP from the port
                     floating_ip = self.network_client.update_floatingip(floating_ip.id, {'floatingip': {'port_id': None}})
-                    #self.assertEqual('200', resp['status'])
                     update_floating_ip = floating_ip['floatingip']
                     self.assertIsNone(update_floating_ip['port_id'])
                     self.assertIsNone(update_floating_ip['fixed_ip_address'])
@@ -212,7 +209,7 @@ class TestMetaData(manager.NetworkScenarioTest):
 
     @attr(type='smoke')
     @services('compute', 'network')
-    def test_metadata(self):
+    def test_floatingip(self):
         self._scenario()
         self._check_public_network_connectivity()
         self._unassign_floating_ip()
