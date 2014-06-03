@@ -124,6 +124,29 @@ class TestScenario(manager.NetworkScenarioTest):
         self.networks.append(network)
         self.subnets.append(subnet)
 
+    def _check_networks(self):
+        # Checks that we see the newly created network/subnet/router via
+        # checking the result of list_[networks,routers,subnets]
+        seen_nets = self._list_networks()
+        seen_names = [n['name'] for n in seen_nets]
+        seen_ids = [n['id'] for n in seen_nets]
+        for mynet in self.networks:
+            self.assertIn(mynet.name, seen_names)
+            self.assertIn(mynet.id, seen_ids)
+        seen_subnets = self._list_subnets()
+        seen_net_ids = [n['network_id'] for n in seen_subnets]
+        seen_subnet_ids = [n['id'] for n in seen_subnets]
+        for mynet in self.networks:
+            self.assertIn(mynet.id, seen_net_ids)
+        for mysubnet in self.subnets:
+            self.assertIn(mysubnet.id, seen_subnet_ids)
+        seen_routers = self._list_routers()
+        seen_router_ids = [n['id'] for n in seen_routers]
+        seen_router_names = [n['name'] for n in seen_routers]
+        for myrouter in self.routers:
+            self.assertIn(myrouter.name, seen_router_names)
+            self.assertIn(myrouter.id, seen_router_ids)
+
     def _create_custom_subnet(self, network, mysubnet, namestart='subnet-smoke-'):
         """
         Create a subnet for the given network within the cidr block
