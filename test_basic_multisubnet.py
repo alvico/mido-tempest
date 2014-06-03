@@ -49,7 +49,7 @@ class TestBasicMultisubnet(scenario.TestScenario):
             key, value = network.popitem()
             ip = value[0]['addr']
             if IPAddress(ip) in IPNetwork(CIDR1):
-                s = + 1
+                s += 1
         return s == 4
 
     @attr(type='smoke')
