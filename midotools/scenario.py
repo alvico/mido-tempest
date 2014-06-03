@@ -51,10 +51,10 @@ class TestScenario(manager.NetworkScenarioTest):
     def custom_scenario(self, scenario):
         self._create_keypairs()
         self._create_security_groups()
-        for network in scenario.networks:
-            self._create_custom_networks()
+        for network in scenario['networks']:
+            self._create_custom_networks(network)
             self._check_networks()
-            for server in network.servers:
+            for server in network['servers']:
                 self._create_servers()
 
     def _get_router(self, tenant_id):
