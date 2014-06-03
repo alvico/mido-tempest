@@ -1,18 +1,16 @@
 __author__ = 'Albert'
-from tempest.api.network import common as net_common
-from tempest.common import debug
-from tempest.common.utils.data_utils import rand_name
+
 from tempest import config
 from tempest.openstack.common import log as logging
-from tempest.scenario import manager
 from tempest.test import attr
 from tempest.test import services
-from tempest import exceptions
 from pprint import pprint
 from tempest.scenario.midokura.midotools import scenario
+from netaddr import IPNetwork, IPAddress
 
 LOG = logging.getLogger(__name__)
-
+CIDR1 = "10.10.10.8/29"
+CIDR2 = "10.10.1.8/29"
 
 class TestBasicMultisubnet(scenario.TestScenario):
 
@@ -27,13 +25,13 @@ class TestBasicMultisubnet(scenario.TestScenario):
         subnetA = {
             "network_id": None,
             "ip_version": 4,
-            "cidr": "10.10.10.8/29",
+            "cidr": CIDR1,
             "allocation_pools": None
         }
         subnetB = {
             "network_id": None,
             "ip_version": 4,
-            "cidr": "10.10.1.8/29",
+            "cidr": CIDR2,
             "allocation_pools": None
         }
         networkA = {
@@ -45,9 +43,13 @@ class TestBasicMultisubnet(scenario.TestScenario):
         }
 
     def _check_vm_assignation(self):
+        s = 0
         for server in self.servers:
-            pprint(server.__dict__)
-
+            network = server.addresses
+            ip = network.addr
+            if IPAddress(ip) in IPNetwork(CIDR1):
+                s = + 1
+        return s == 4
 
     @attr(type='smoke')
     @services('compute', 'network')
