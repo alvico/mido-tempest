@@ -1,10 +1,10 @@
 __author__ = 'Albert'
 from tempest.api.network import common as net_common
-from tempest.common import debug
 from tempest.common.utils.data_utils import rand_name
 from tempest import config
 from tempest.openstack.common import log as logging
 from tempest.scenario import manager
+from neutronclient.common import exceptions as exc
 from tempest.test import attr
 from tempest.test import services
 from tempest.common import ssh
@@ -12,6 +12,7 @@ from tempest import exceptions
 from pprint import pprint
 
 LOG = logging.getLogger(__name__)
+
 
 class TestScenario(manager.NetworkScenarioTest):
 
