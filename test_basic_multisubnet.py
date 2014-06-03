@@ -44,10 +44,15 @@ class TestBasicMultisubnet(manager.NetworkScenarioTest):
             'networks': [networkA],
         }
 
+    def _check_vm_assignation(self):
+        servers = self.scenario_builder.get_servers
+        for server in servers:
+            pprint(server.__dict__)
 
 
     @attr(type='smoke')
     @services('compute', 'network')
     def test_basic_multisubnet_scenario(self):
         self._scenario_conf()
-        self.scenario.custom_scenario(self.scenario)
+        self.scenario_builder.custom_scenario(self.scenario)
+        self.assertTrue(self._check_vm_assignation())
