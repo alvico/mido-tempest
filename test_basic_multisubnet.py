@@ -27,13 +27,13 @@ class TestBasicMultisubnet(scenario.TestScenario):
         subnetA = {
             "network_id": None,
             "ip_version": 4,
-            "cidr": "10.10.10.10/29",
+            "cidr": "10.10.10.8/29",
             "allocation_pools": None
         }
         subnetB = {
             "network_id": None,
             "ip_version": 4,
-            "cidr": "10.10.1.10/29",
+            "cidr": "10.10.1.8/29",
             "allocation_pools": None
         }
         networkA = {
