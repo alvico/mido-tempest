@@ -9,11 +9,12 @@ from tempest.test import attr
 from tempest.test import services
 from tempest import exceptions
 from pprint import pprint
-from tempest.scenario.midokura.midotools.scenario import TestScenario as myscenario
+from tempest.scenario.midokura.midotools import scenario
 
 LOG = logging.getLogger(__name__)
 
-class TestBasicMultisubnet(manager.NetworkScenarioTest):
+
+class TestBasicMultisubnet(scenario.TestScenario):
 
     CONF = config.TempestConfig()
 
@@ -21,7 +22,6 @@ class TestBasicMultisubnet(manager.NetworkScenarioTest):
     def setUpClass(cls):
         super(TestBasicMultisubnet, cls).setUpClass()
         cls.scenario = {}
-        cls.scenario_builder = myscenario()
 
     def _scenario_conf(self):
         subnetA = {
@@ -45,8 +45,7 @@ class TestBasicMultisubnet(manager.NetworkScenarioTest):
         }
 
     def _check_vm_assignation(self):
-        servers = self.scenario_builder.get_servers
-        for server in servers:
+        for server in self.servers:
             pprint(server.__dict__)
 
 
@@ -54,5 +53,5 @@ class TestBasicMultisubnet(manager.NetworkScenarioTest):
     @services('compute', 'network')
     def test_basic_multisubnet_scenario(self):
         self._scenario_conf()
-        self.scenario_builder.custom_scenario(self.scenario)
+        self.custom_scenario(self.scenario)
         self.assertTrue(self._check_vm_assignation())
