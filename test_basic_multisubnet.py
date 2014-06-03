@@ -46,7 +46,8 @@ class TestBasicMultisubnet(scenario.TestScenario):
         s = 0
         for server in self.servers:
             network = server.addresses
-            ip = network.addr
+            key, value = network.popitem()
+            ip = value[0]['addr']
             if IPAddress(ip) in IPNetwork(CIDR1):
                 s = + 1
         return s == 4
