@@ -21,7 +21,7 @@ class TestBasicMultisubnet(manager.NetworkScenarioTest):
     def setUpClass(cls):
         super(TestBasicMultisubnet, cls).setUpClass()
         cls.scenario = {}
-        cls.scenario_builder = myscenario
+        cls.scenario_builder = myscenario()
 
     def _scenario_conf(self):
         subnetA = {
