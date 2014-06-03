@@ -9,7 +9,7 @@ from tempest.test import attr
 from tempest.test import services
 from tempest import exceptions
 from pprint import pprint
-from tempest.scenario.midokura.midotools import scenario
+from tempest.scenario.midokura.midotools import myscenario
 
 LOG = logging.getLogger(__name__)
 
@@ -21,7 +21,7 @@ class TestBasicMultisubnet(manager.NetworkScenarioTest):
     def setUpClass(cls):
         super(TestBasicMultisubnet, cls).setUpClass()
         cls.scenario = {}
-        cls.scenario_builder = scenario
+        cls.scenario_builder = myscenario
 
     def _scenario_conf(self):
         subnetA = {
