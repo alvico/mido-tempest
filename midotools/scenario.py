@@ -41,8 +41,7 @@ class TestScenario(manager.NetworkScenarioTest):
         cls.routers = []
         cls.servers = []
         cls.floating_ips = {}
-        os = clients.AdminManager(interface=cls._interface)
-        cls.idclient = os.identity_client
+
 
     def basic_scenario(self):
         self._create_keypairs()
@@ -114,7 +113,7 @@ class TestScenario(manager.NetworkScenarioTest):
         tenant_name = data_utils.rand_name(name='tenant-')
         pprint(tenant_name)
         self.identity_client.create_tenant()
-        resp, body = self.idclient.create_tenant(tenant_name, enabled=True)
+        resp, body = self.identity_client.create_tenant(tenant_name, enabled=True)
         tenant = body
         self.data.tenants.append(tenant)
         tenant_id = tenant['id']
