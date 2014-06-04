@@ -57,10 +57,6 @@ class TestMultiTenants(scenario.TestScenario):
             'tenants': [tenantA, tenantB],
         }
 
-    def _check_vm_notinterfared(self):
-        #do stuff
-        return None
-
     def _check_floatingip(self):
         ssh_login = self.config.compute.image_ssh_user
         for server in self.servers:
@@ -76,3 +72,4 @@ class TestMultiTenants(scenario.TestScenario):
     def test_basic_multitenant_scenario(self):
         self._scenario_conf()
         self.custom_scenario(self.scenario)
+        self._check_floatingip()
