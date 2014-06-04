@@ -38,8 +38,13 @@ class TestBasicMultisubnet(scenario.TestScenario):
             'subnets': [subnetA, subnetB],
             'servers': ['serverA', 'serverB', 'serverC', 'serverD', 'serverE']
         }
-        self.scenario = {
+        tenantA = {
             'networks': [networkA],
+            'tenant_id': None,
+            'type': 'default'
+        }
+        self.scenario = {
+            'tenants': [tenantA],
         }
 
     def _check_vm_assignation(self):
