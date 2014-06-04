@@ -22,6 +22,9 @@ class TestBasicMultisubnet(scenario.TestScenario):
         cls.scenario = {}
 
     def _scenario_conf(self):
+        serverA = {
+            'floating_ip': True
+        }
         subnetA = {
             "network_id": None,
             "ip_version": 4,
@@ -36,7 +39,7 @@ class TestBasicMultisubnet(scenario.TestScenario):
         }
         networkA = {
             'subnets': [subnetA, subnetB],
-            'servers': ['serverA', 'serverB', 'serverC', 'serverD', 'serverE']
+            'servers': [serverA, serverA, serverA, serverA, serverA]
         }
         tenantA = {
             'networks': [networkA],

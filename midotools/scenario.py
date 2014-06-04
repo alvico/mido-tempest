@@ -68,7 +68,7 @@ class TestScenario(manager.NetworkScenarioTest):
                 self._check_networks()
                 for server in network['servers']:
                     myserver = self._create_servers()
-                    if server.get('floating_ip'):
+                    if server['floating_ip']:
                         self._assign_custom_floating_ips(myserver)
 
     def _get_router(self, tenant_id):
