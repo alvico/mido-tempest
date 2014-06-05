@@ -60,6 +60,7 @@ class TestScenario(manager.NetworkScenarioTest):
             self._create_custom_security_groups(tenant_id)
             for network in tenant['networks']:
                 network['tenand_id'] = tenant_id
+                pprint(network)
                 self._create_custom_networks(network)
                 self._check_networks()
                 for server in network['servers']:
