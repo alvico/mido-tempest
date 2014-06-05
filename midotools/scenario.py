@@ -110,7 +110,6 @@ class TestScenario(manager.NetworkScenarioTest):
     def _create_tenant(self):
         # Create a tenant that is enabled
         tenant = self.admin.tenant_create_enabled()
-        self.data.tenants.append(tenant)
         tenant_id = tenant['id']
         return tenant_id
 
