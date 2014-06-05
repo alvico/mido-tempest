@@ -212,7 +212,7 @@ class TestScenario(manager.NetworkScenarioTest):
         security_groups = [self.security_groups[tenant_id].name]
         create_kwargs = {
             'nics': [
-                {'net-id': network.id},
+                {'net-id': network['id']},
                 ],
             'key_name': keypair_name,
             'security_groups': security_groups,
