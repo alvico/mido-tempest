@@ -199,6 +199,7 @@ class TestScenario(manager.NetworkScenarioTest):
         return subnet
 
     def _create_server(self, name, network):
+        pprint(network.tenant_id)
         tenant_id = network.tenant_id
         keypair_name = self.keypairs[tenant_id].name
         security_groups = [self.security_groups[tenant_id].name]
