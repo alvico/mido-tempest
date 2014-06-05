@@ -39,6 +39,7 @@ class TestScenario(manager.NetworkScenarioTest):
         cls.routers = []
         cls.servers = []
         cls.floating_ips = {}
+        cls.admin = TenantAdmin()
 
 
     def basic_scenario(self):
@@ -108,7 +109,7 @@ class TestScenario(manager.NetworkScenarioTest):
 
     def _create_tenant(self):
         # Create a tenant that is enabled
-        tenant = TenantAdmin.tenant_create_enabled()
+        tenant = self.admin.tenant_create_enabled()
         self.data.tenants.append(tenant)
         tenant_id = tenant['id']
         return tenant_id
