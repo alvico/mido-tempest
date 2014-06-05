@@ -60,7 +60,6 @@ class TestScenario(manager.NetworkScenarioTest):
             self._create_custom_security_groups(tenant_id)
             for network in tenant['networks']:
                 network['tenant_id'] = tenant_id
-                pprint(network)
                 self._create_custom_networks(network)
                 self._check_networks()
                 for server in network['servers']:
@@ -138,9 +137,6 @@ class TestScenario(manager.NetworkScenarioTest):
 
     def _create_custom_networks(self, mynetwork):
         network = self._create_network(mynetwork['tenant_id'])
-        pprint("network:")
-        pprint(mynetwork)
-        pprint(network)
         router = None
         if mynetwork.get('router'):
             router = self._get_router(mynetwork['tenant_id'])
@@ -203,6 +199,7 @@ class TestScenario(manager.NetworkScenarioTest):
         return subnet
 
     def _create_server(self, name, network):
+        pprint("server creation")
         pprint(network.tenant_id)
         tenant_id = network.tenant_id
         keypair_name = self.keypairs[tenant_id].name
@@ -218,6 +215,7 @@ class TestScenario(manager.NetworkScenarioTest):
         return server
 
     def _create_servers(self):
+        pprint(self.networks)
         for i, network in enumerate(self.networks):
             name = rand_name('server-smoke-%d-' % i)
             server = self._create_server(name, network)
