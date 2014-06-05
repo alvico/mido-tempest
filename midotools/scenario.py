@@ -1,15 +1,13 @@
 __author__ = 'Albert'
 from tempest.api.network import common as net_common
-from tempest.api.identity import base
 from tempest.common.utils.data_utils import rand_name
 from tempest import config
 from tempest.openstack.common import log as logging
 from tempest.scenario import manager
 from neutronclient.common import exceptions as exc
 from tempest.common.utils import data_utils
-from tempest import clients
 from pprint import pprint
-
+from tempest.scenario.midokura.midotools.admintools import TenantAdmin
 LOG = logging.getLogger(__name__)
 
 '''
@@ -110,11 +108,7 @@ class TestScenario(manager.NetworkScenarioTest):
 
     def _create_tenant(self):
         # Create a tenant that is enabled
-        tenant_name = data_utils.rand_name(name='tenant-')
-        pprint(tenant_name)
-        self.identity_client.create_tenant()
-        resp, body = self.identity_client.create_tenant(tenant_name, enabled=True)
-        tenant = body
+        tenant = TenantAdmin.tenant_create_enabled()
         self.data.tenants.append(tenant)
         tenant_id = tenant['id']
         return tenant_id
