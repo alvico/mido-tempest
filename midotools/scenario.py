@@ -137,10 +137,10 @@ class TestScenario(manager.NetworkScenarioTest):
         self.routers.append(router)
 
     def _create_custom_networks(self, mynetwork):
-        network = self._create_network(mynetwork['tenand_id'])
+        network = self._create_network(mynetwork['tenant_id'])
         router = None
         if mynetwork.get('router'):
-            router = self._get_router(mynetwork['tenand_id'])
+            router = self._get_router(mynetwork['tenant_id'])
         for mysubnet in mynetwork['subnets']:
             subnet = self._create_custom_subnet(network, mysubnet)
             if router:
