@@ -51,6 +51,7 @@ class TestScenario(manager.NetworkScenarioTest):
 
     def custom_scenario(self, scenario):
         tenant_id = None
+        pprint("######")
         for tenant in scenario['tenants']:
             if tenant['type'] == 'default':
                 tenant_id = self.tenant_id
@@ -59,6 +60,8 @@ class TestScenario(manager.NetworkScenarioTest):
             self._create_custom_keypairs(tenant_id)
             self._create_custom_security_groups(tenant_id)
             for network in tenant['networks']:
+                pprint("custom_scenario")
+                pprint(tenant_id)
                 network['tenant_id'] = tenant_id
                 self._create_custom_networks(network)
                 self._check_networks()
@@ -144,6 +147,8 @@ class TestScenario(manager.NetworkScenarioTest):
             subnet = self._create_custom_subnet(network, mysubnet)
             if router:
                 subnet.add_to_router(router.id)
+        pprint("_create_custom_networks")
+        pprint(network)
         self.networks.append(network)
         self.subnets.append(subnet)
         if router:
