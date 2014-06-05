@@ -66,7 +66,8 @@ class TestScenario(manager.NetworkScenarioTest):
                 self._create_custom_networks(network)
                 self._check_networks()
                 for server in network['servers']:
-                    myserver = self._create_server(network)
+                    name = rand_name('server-smoke-')
+                    myserver = self._create_server(name, network)
                     if server['floating_ip']:
                         self._assign_custom_floating_ips(myserver)
 
