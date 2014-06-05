@@ -63,11 +63,11 @@ class TestScenario(manager.NetworkScenarioTest):
                 pprint("custom_scenario")
                 pprint(tenant_id)
                 network['tenant_id'] = tenant_id
-                network = self._create_custom_networks(network)
+                mynetwork = self._create_custom_networks(network)
                 self._check_networks()
                 for server in network['servers']:
                     name = rand_name('server-smoke-')
-                    myserver = self._create_server(name, network)
+                    myserver = self._create_server(name, mynetwork)
                     if server['floating_ip']:
                         self._assign_custom_floating_ips(myserver)
 
