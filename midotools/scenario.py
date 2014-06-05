@@ -41,7 +41,6 @@ class TestScenario(manager.NetworkScenarioTest):
         cls.floating_ips = {}
         cls.admin = TenantAdmin()
 
-
     def basic_scenario(self):
         self._create_keypairs()
         self._create_security_groups()
@@ -138,14 +137,17 @@ class TestScenario(manager.NetworkScenarioTest):
 
     def _create_custom_networks(self, mynetwork):
         network = self._create_network(mynetwork['tenand_id'])
-        for mysubnet in mynetwork['subnets']:
-            subnet = self._create_custom_subnet(network, mysubnet)
+        router = None
         if mynetwork.get('router'):
             router = self._get_router(mynetwork['tenand_id'])
-            subnet.add_to_router(router.id)
-            self.routers.append(router)
+        for mysubnet in mynetwork['subnets']:
+            subnet = self._create_custom_subnet(network, mysubnet)
+            if router:
+                subnet.add_to_router(router.id)
         self.networks.append(network)
         self.subnets.append(subnet)
+        if router:
+            self.routers.append(router)
 
     def _check_networks(self):
         # Checks that we see the newly created network/subnet/router via
