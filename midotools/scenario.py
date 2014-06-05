@@ -138,6 +138,9 @@ class TestScenario(manager.NetworkScenarioTest):
 
     def _create_custom_networks(self, mynetwork):
         network = self._create_network(mynetwork['tenant_id'])
+        pprint("network:")
+        pprint(mynetwork)
+        pprint(network)
         router = None
         if mynetwork.get('router'):
             router = self._get_router(mynetwork['tenant_id'])
