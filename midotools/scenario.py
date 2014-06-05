@@ -63,7 +63,7 @@ class TestScenario(manager.NetworkScenarioTest):
                 pprint("custom_scenario")
                 pprint(tenant_id)
                 network['tenant_id'] = tenant_id
-                self._create_custom_networks(network)
+                network = self._create_custom_networks(network)
                 self._check_networks()
                 for server in network['servers']:
                     name = rand_name('server-smoke-')
@@ -154,6 +154,7 @@ class TestScenario(manager.NetworkScenarioTest):
         self.subnets.append(subnet)
         if router:
             self.routers.append(router)
+        return network
 
     def _check_networks(self):
         # Checks that we see the newly created network/subnet/router via
