@@ -66,7 +66,7 @@ class TestScenario(manager.NetworkScenarioTest):
                 self._create_custom_networks(network)
                 self._check_networks()
                 for server in network['servers']:
-                    myserver = self._create_servers()
+                    myserver = self._create_server(network)
                     if server['floating_ip']:
                         self._assign_custom_floating_ips(myserver)
 
@@ -206,7 +206,7 @@ class TestScenario(manager.NetworkScenarioTest):
     def _create_server(self, name, network):
         pprint("server creation")
         pprint(network.tenant_id)
-        tenant_id = network.tenant_id
+        tenant_id = network['tenant_id']
         keypair_name = self.keypairs[tenant_id].name
         security_groups = [self.security_groups[tenant_id].name]
         create_kwargs = {
