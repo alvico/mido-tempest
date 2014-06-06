@@ -128,8 +128,6 @@ class TestScenario(manager.NetworkScenarioTest):
 
     def _create_custom_security_groups(self, tenant_id):
         self.security_groups[tenant_id] = self._create_security_group()
-        pprint(self.security_groups[tenant_id].name)
-        
 
     def _create_networks(self):
         network = self._create_network(self.tenant_id)
