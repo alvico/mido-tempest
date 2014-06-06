@@ -209,6 +209,7 @@ class TestScenario(manager.NetworkScenarioTest):
         keypair_name = self.keypairs[tenant_id].name
         pprint(keypair_name)
         security_groups = [self.security_groups[tenant_id].name]
+        pprint("security groups")
         pprint(security_groups)
         create_kwargs = {
             'nics': [
