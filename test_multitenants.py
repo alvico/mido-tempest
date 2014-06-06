@@ -61,7 +61,6 @@ class TestMultiTenants(scenario.TestScenario):
         ssh_login = self.config.compute.image_ssh_user
         for server in self.servers:
             private_key = self.keypairs[server.__dict__['tenant_id']].private_key
-
             #self._check_vm_connectivity(ip_address, ssh_login, private_key)
 
     @attr(type='smoke')
@@ -69,4 +68,4 @@ class TestMultiTenants(scenario.TestScenario):
     def test_basic_multitenant_scenario(self):
         self._scenario_conf()
         self.custom_scenario(self.scenario)
-        self._check_floatingip()
+
